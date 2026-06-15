@@ -58,7 +58,24 @@ export const clients = pgTable('clients', {
     nameIdx: index('clients_name_idx').on(t.trainerId, t.name),
 }));
 
+export const TOUCH_TYPES = ['message', 'call', 'training', 'other'] as const;
+export type TouchType = typeof TOUCH_TYPES[number];
+
+export const touches = pgTable('touches', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    clientId: uuid('client_id').notNull().references(() => clients.id, {onDelete: 'cascade'}),
+    trainerId: uuid('trainer_id').notNull().references(() => trainers.id),
+    type: text('type', {enum: TOUCH_TYPES}).notNull(),
+    touchedAt: date('touched_at').notNull(),
+    note: text('note'),
+    createdAt: timestamp('created_at', {withTimezone: true}).defaultNow().notNull(),
+}, (t) => ({
+    clientIdx: index('touches_client_idx').on(t.clientId, t.touchedAt.desc()),
+}));
+
 export type Trainer = typeof trainers.$inferSelect;
 export type NewTrainer = typeof trainers.$inferInsert;
 export type Client = typeof clients.$inferSelect;
 export type NewClient = typeof clients.$inferInsert;
+export type Touch = typeof touches.$inferSelect;
+export type NewTouch = typeof touches.$inferInsert;
