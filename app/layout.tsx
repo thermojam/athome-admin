@@ -1,19 +1,19 @@
-import type { Metadata } from 'next';
-import { Nunito, JetBrains_Mono } from 'next/font/google';
+import type {Metadata} from 'next';
+import {Nunito, JetBrains_Mono} from 'next/font/google';
 import './globals.css';
 
 const nunito = Nunito({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-sans-loaded',
-  display: 'swap',
+    subsets: ['latin', 'cyrillic'],
+    weight: ['400', '500', '600', '700'],
+    variable: '--font-sans-loaded',
+    display: 'swap',
 });
 
 const jetbrains = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-mono-loaded',
-  display: 'swap',
+    subsets: ['latin'],
+    weight: ['400', '500'],
+    variable: '--font-mono-loaded',
+    display: 'swap',
 });
 
 // TODO: когда положишь Gerhaus в public/fonts — раскомментируй и убери fallback
@@ -26,18 +26,18 @@ const jetbrains = JetBrains_Mono({
 // });
 
 export const metadata: Metadata = {
-  title: 'Штаб',
-  description: 'Админка тренера: база клиентов и пятничный ритуал',
+    title: 'Штаб',
+    description: 'Админка тренера: база клиентов и пятничный ритуал',
 };
 
 export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
+                                       children,
+                                   }: {
+    children: React.ReactNode;
 }) {
-  return (
-    <html lang="ru" className={`${nunito.variable} ${jetbrains.variable}`}>
-      <body>{children}</body>
-    </html>
-  );
+    return (
+        <html lang="ru" className={`${nunito.variable} ${jetbrains.variable}`}>
+        <body>{children}</body>
+        </html>
+    );
 }

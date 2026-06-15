@@ -1,9 +1,9 @@
 export const DEFAULT_THRESHOLDS = {
-  leadStaleDays: 3,
-  activeFreshDays: 10,
-  activeStaleDays: 21,
-  cooledStaleDays: 30,
-  silentDays: 45,
+    leadStaleDays: 3,
+    activeFreshDays: 10,
+    activeStaleDays: 21,
+    cooledStaleDays: 30,
+    silentDays: 45,
 } as const;
 
 export const DEFAULT_PROMPT_TEMPLATE = `Ты — мой помощник-копирайтер. Я тренер на дому, веду базу клиентов. По строкам ниже собери черновики коротких личных сообщений в моём голосе: тёплых, без сюсюканья, без эмодзи в начале, с обращением по имени и упоминанием личного факта. На каждую строку — один черновик, 2-4 предложения, заканчивающийся открытым вопросом или приглашением.`;
