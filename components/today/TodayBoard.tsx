@@ -45,6 +45,7 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
     );
     const [selected, setSelected] = useState<Set<string>>(new Set());
     const [pending, startTransition] = useTransition();
+    const [copyPending, startCopyTransition] = useTransition();
     const [modal, setModal] = useState<ModalState>(EMPTY_MODAL);
     const [toast, setToast] = useState<string | null>(null);
 
@@ -71,32 +72,35 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
     }
 
     function quickTouch(clientId: string) {
+        setSelected((prev) => {
+            const next = new Set(prev);
+            next.delete(clientId);
+            return next;
+        });
         startTransition(async () => {
             removeOptimistically(clientId);
-            setSelected((prev) => {
-                const next = new Set(prev);
-                next.delete(clientId);
-                return next;
-            });
             const res = await recordTouch(clientId, 'message');
             if (!res.ok) showToast(res.error);
         });
     }
 
-    async function handleCopy() {
-        const ids = [...selected];
-        const {text, missing} = await buildExportForSelection(ids);
-        if (missing.length > 0) {
-            setModal({open: true, missing, partial: text || null});
-            return;
-        }
-        if (text === '') {
-            showToast('Нечего копировать.');
-            return;
-        }
-        await navigator.clipboard.writeText(text);
-        setSelected(new Set());
-        showToast('В буфере. Вставляй в Claude.');
+    function handleCopy() {
+        if (copyPending) return;
+        startCopyTransition(async () => {
+            const ids = [...selected];
+            const {text, missing} = await buildExportForSelection(ids);
+            if (missing.length > 0) {
+                setModal({open: true, missing, partial: text || null});
+                return;
+            }
+            if (text === '') {
+                showToast('Нечего копировать.');
+                return;
+            }
+            await navigator.clipboard.writeText(text);
+            setSelected(new Set());
+            showToast('В буфере. Вставляй в Claude.');
+        });
     }
 
     async function copyPartial() {
@@ -125,7 +129,7 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
                 <Button
                     variant="primary"
                     size="md"
-                    disabled={selected.size === 0 || pending}
+                    disabled={selected.size === 0 || pending || copyPending}
                     onClick={handleCopy}
                 >
                     Скопировать для Claude{selected.size > 0 ? ` (${selected.size})` : ''}
