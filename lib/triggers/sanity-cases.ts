@@ -67,11 +67,11 @@ export const SANITY_CASES: SanityCase[] = [
         expected: null,
     },
     {
-        title: 'Остывший, 30 дней — medium cooled_stale',
+        title: 'Остывший, 30 дней — low cooled_stale',
         status: 'cooling',
         septemberBooking: false,
         daysSinceLastTouch: 30,
-        expected: {kind: 'cooled_stale', priority: 'medium'},
+        expected: {kind: 'cooled_stale', priority: 'low'},
     },
     {
         title: 'Активный, 45 дней — silent (страховка перекрывает active_stale)',

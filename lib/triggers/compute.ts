@@ -62,7 +62,7 @@ export function computeTrigger(
 
         case 'cooling':
             if (daysSince >= thresholds.cooledStaleDays) {
-                return {kind: 'cooled_stale', priority: 'medium', daysSince, emoji: '🟡'};
+                return {kind: 'cooled_stale', priority: 'low', daysSince, emoji: '🟡'};
             }
             return null;
 

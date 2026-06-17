@@ -2,7 +2,7 @@ import {sql} from 'drizzle-orm';
 import {db} from '@/lib/db';
 import type {Client} from '@/lib/db/schema';
 
-export type ClientWithLastTouch = Client & {lastTouchDate: Date | null};
+export type ClientWithLastTouch = Client & {lastTouchDate: Date};
 
 export async function listClientsWithLastTouch(trainerId: string): Promise<ClientWithLastTouch[]> {
     const rows = await db.execute<{
@@ -36,6 +36,7 @@ export async function listClientsWithLastTouch(trainerId: string): Promise<Clien
         LEFT JOIN LATERAL (
             SELECT touched_at FROM touches t
             WHERE t.client_id = c.id
+              AND t.trainer_id = c.trainer_id
             ORDER BY t.touched_at DESC
             LIMIT 1
         ) lt ON true
@@ -62,6 +63,6 @@ export async function listClientsWithLastTouch(trainerId: string): Promise<Clien
         deletedAt: r.deleted_at,
         createdAt: r.created_at,
         updatedAt: r.updated_at,
-        lastTouchDate: r.last_touch_date ? new Date(r.last_touch_date) : null,
+        lastTouchDate: new Date(r.last_touch_date!),
     }));
 }

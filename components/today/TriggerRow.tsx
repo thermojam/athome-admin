@@ -9,7 +9,7 @@ export function TriggerRow({entry}: {entry: TriggerEntry}) {
     return (
         <Link
             href={`/clients/${client.id}`}
-            className="flex items-center gap-3 px-4 py-3 hover:bg-bg-3 transition-colors border-t hairline"
+            className="flex items-center gap-3 px-4 py-3 hover:bg-bg-3 transition-colors border-t hairline first:border-t-0"
         >
             <span className="text-[20px] leading-none w-6 text-center" aria-hidden="true">{trigger.emoji}</span>
             <div className="flex-1 min-w-0">
