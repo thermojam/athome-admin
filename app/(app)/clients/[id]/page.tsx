@@ -1,10 +1,13 @@
 import {notFound, redirect} from 'next/navigation';
 import {auth} from '@/lib/auth/config';
 import {getClient} from '@/lib/clients/queries';
+import {listTouchesForClient} from '@/lib/touches/queries';
 import {updateClient, softDeleteClient, type ActionResult} from '@/lib/clients/actions';
 import {Card} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {ClientForm} from '@/components/client/ClientForm';
+import {TouchActions} from '@/components/touch/TouchActions';
+import {TouchHistory} from '@/components/touch/TouchHistory';
 import {profileLabel, statusLabel, sourceLabel} from '@/lib/clients/labels';
 
 export default async function ClientPage({params}: {params: Promise<{id: string}>}) {
@@ -14,6 +17,8 @@ export default async function ClientPage({params}: {params: Promise<{id: string}
     const {id} = await params;
     const client = await getClient(session.user.id, id);
     if (!client) notFound();
+
+    const touches = client.deletedAt ? [] : await listTouchesForClient(session.user.id, id);
 
     async function update(_prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
         'use server';
@@ -27,7 +32,10 @@ export default async function ClientPage({params}: {params: Promise<{id: string}
 
     return (
         <>
-            <h1 className="font-display uppercase text-[27px] tracking-wide mb-2">{client.name}</h1>
+            <div className="flex items-start justify-between gap-4 mb-2">
+                <h1 className="font-display uppercase text-[27px] tracking-wide">{client.name}</h1>
+                {!client.deletedAt && <TouchActions clientId={client.id}/>}
+            </div>
             <p className="text-tx-2 text-[13px] font-mono mb-6">
                 {statusLabel(client.status)} · {profileLabel(client.profile)} · {sourceLabel(client.source)}
             </p>
@@ -41,11 +49,19 @@ export default async function ClientPage({params}: {params: Promise<{id: string}
                     Клиент удалён {client.deletedAt.toISOString().slice(0, 10)}. Редактирование сохраняет правки, но клиент не появится в списке без отдельного восстановления.
                 </div>
             )}
-            <Card>
+            <Card className="mb-8">
                 <ClientForm action={update} initial={client} submitLabel="Сохранить"/>
             </Card>
+
             {!client.deletedAt && (
-                <form action={remove} className="mt-6">
+                <section className="mb-8">
+                    <h2 className="font-display uppercase text-[15px] tracking-wide text-tx-2 mb-3">История касаний</h2>
+                    <TouchHistory touches={touches}/>
+                </section>
+            )}
+
+            {!client.deletedAt && (
+                <form action={remove}>
                     <Button type="submit" variant="ghost" size="sm">
                         Удалить (soft)
                     </Button>
