@@ -5,7 +5,7 @@ import {db} from '@/lib/db';
 import {trainers} from '@/lib/db/schema';
 import {listClientsWithLastTouch} from '@/lib/triggers/query';
 import {groupAndSortTriggers} from '@/lib/today/group';
-import {TodayList} from '@/components/today/TodayList';
+import {TodayBoard, type BoardGroup} from '@/components/today/TodayBoard';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {DEFAULT_THRESHOLDS} from '@/lib/triggers/defaults';
 
@@ -19,23 +19,35 @@ export default async function TodayPage() {
     const clients = await listClientsWithLastTouch(session.user.id);
     const groups = groupAndSortTriggers(clients, new Date(), thresholds);
 
-    const totalTriggers = groups.reduce((sum, g) => sum + g.entries.length, 0);
+    const boardGroups: BoardGroup[] = groups.map((g) => ({
+        key: g.key,
+        title: g.title,
+        emoji: g.emoji,
+        entries: g.entries.map((e) => ({
+            clientId: e.client.id,
+            name: e.client.name,
+            profile: e.client.profile,
+            triggerKind: e.trigger.kind,
+            priority: e.trigger.priority,
+            emoji: e.trigger.emoji,
+            daysSince: e.trigger.daysSince,
+        })),
+    }));
+
+    const total = boardGroups.reduce((sum, g) => sum + g.entries.length, 0);
 
     return (
         <>
             <div className="flex items-end justify-between mb-6">
                 <h1 className="font-display uppercase text-[27px] tracking-wide">Сегодня</h1>
-                {totalTriggers > 0 && (
-                    <span className="text-tx-2 font-mono text-[12px]">{totalTriggers} триггеров</span>
+                {total > 0 && (
+                    <span className="text-tx-2 font-mono text-[12px]">{total} триггеров</span>
                 )}
             </div>
-            {totalTriggers === 0 ? (
-                <EmptyState
-                    title="Триггеров нет"
-                    hint="База под контролем — так держать."
-                />
+            {total === 0 ? (
+                <EmptyState title="Триггеров нет" hint="База под контролем — так держать."/>
             ) : (
-                <TodayList groups={groups}/>
+                <TodayBoard groups={boardGroups}/>
             )}
         </>
     );
