@@ -1,20 +1,13 @@
 'use server';
 
 import {eq} from 'drizzle-orm';
-import {redirect} from 'next/navigation';
 import {db} from '@/lib/db';
 import {trainers} from '@/lib/db/schema';
-import {auth} from '@/lib/auth/config';
 import {listClientsWithLastTouch} from '@/lib/triggers/query';
 import {computeTrigger} from '@/lib/triggers/compute';
 import {DEFAULT_THRESHOLDS, DEFAULT_PROMPT_TEMPLATE} from '@/lib/triggers/defaults';
 import {buildClaudeExport, type BuildClaudeExportResult, type ClientForExport} from './claude';
-
-async function requireTrainerId(): Promise<string> {
-    const session = await auth();
-    if (!session?.user?.id) redirect('/login');
-    return session.user.id;
-}
+import {requireTrainerId} from '@/lib/auth/require-trainer';
 
 export async function buildExportForSelection(
     clientIds: string[],

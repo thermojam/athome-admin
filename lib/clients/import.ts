@@ -1,14 +1,13 @@
 'use server';
 
-import {redirect} from 'next/navigation';
 import {revalidatePath} from 'next/cache';
 import {and, eq, isNull} from 'drizzle-orm';
-import {auth} from '@/lib/auth/config';
 import {db} from '@/lib/db';
 import {clients, touches} from '@/lib/db/schema';
 import {decodeFile, parseCsvText, MAX_BYTES} from '@/lib/csv/parse';
 import {validateRow} from '@/lib/csv/validate';
 import type {CsvRow, RowError} from '@/lib/csv/validate';
+import {requireTrainerId} from '@/lib/auth/require-trainer';
 
 export type PreviewResult =
     | {kind: 'file_error'; message: string}
@@ -18,12 +17,6 @@ export type CommitResult =
     | {kind: 'file_error'; message: string}
     | {kind: 'has_errors'; errors: RowError[]}
     | {kind: 'imported'; added: number; updated: number};
-
-async function requireTrainerId(): Promise<string> {
-    const session = await auth();
-    if (!session?.user?.id) redirect('/login');
-    return session.user.id;
-}
 
 export async function previewImport(formData: FormData): Promise<PreviewResult> {
     await requireTrainerId();

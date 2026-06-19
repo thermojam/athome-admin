@@ -5,20 +5,12 @@ import {redirect} from 'next/navigation';
 import {and, eq} from 'drizzle-orm';
 import {db} from '@/lib/db';
 import {clients} from '@/lib/db/schema';
-import {auth} from '@/lib/auth/config';
 import {ClientCreateSchema, ClientUpdateSchema, LeadCreateSchema} from '@/lib/zod/client';
+import {requireTrainerId} from '@/lib/auth/require-trainer';
 
 export type ActionResult =
     | {ok: true; id?: string}
     | {ok: false; error: string; fieldErrors?: Record<string, string>};
-
-async function requireTrainerId(): Promise<string> {
-    const session = await auth();
-    if (!session?.user?.id) {
-        redirect('/login');
-    }
-    return session.user.id;
-}
 
 function collectFieldErrors(error: import('zod').ZodError): Record<string, string> {
     const errs: Record<string, string> = {};

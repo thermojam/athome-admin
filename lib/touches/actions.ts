@@ -1,21 +1,14 @@
 'use server';
 
 import {revalidatePath} from 'next/cache';
-import {redirect} from 'next/navigation';
 import {and, eq, isNull} from 'drizzle-orm';
 import {db} from '@/lib/db';
 import {clients, touches} from '@/lib/db/schema';
 import type {TouchType} from '@/lib/db/schema';
-import {auth} from '@/lib/auth/config';
 import {TouchCreateSchema} from '@/lib/zod/touch';
+import {requireTrainerId} from '@/lib/auth/require-trainer';
 
 export type RecordTouchResult = {ok: true} | {ok: false; error: string};
-
-async function requireTrainerId(): Promise<string> {
-    const session = await auth();
-    if (!session?.user?.id) redirect('/login');
-    return session.user.id;
-}
 
 export async function recordTouch(
     clientId: string,
