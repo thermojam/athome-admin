@@ -46,11 +46,16 @@ export default async function ClientsPage({searchParams}: {searchParams: SP}) {
             {isEmpty ? (
                 <EmptyState
                     title="База пустая"
-                    hint="Добавь первого клиента — или быстро заведи лида с любого экрана."
+                    hint="Импортируй таблицу из Excel — или добавь первого клиента вручную."
                     action={
-                        <Link href="/clients/new">
-                            <Button variant="primary" size="md">+ Клиент</Button>
-                        </Link>
+                        <div className="flex gap-2 flex-wrap justify-center">
+                            <Link href="/clients/import">
+                                <Button variant="primary" size="md">Импортируй таблицу</Button>
+                            </Link>
+                            <Link href="/clients/new">
+                                <Button variant="secondary" size="md">+ Клиент</Button>
+                            </Link>
+                        </div>
                     }
                 />
             ) : (
