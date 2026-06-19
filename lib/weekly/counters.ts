@@ -3,11 +3,11 @@ import {db} from '@/lib/db';
 import {clients, trainers, CLIENT_STATUSES} from '@/lib/db/schema';
 import type {ClientStatus} from '@/lib/db/schema';
 import {listClientsWithLastTouch} from '@/lib/triggers/query';
-import {computeTrigger} from '@/lib/triggers/compute';
-import type {TriggerPriority} from '@/lib/triggers/compute';
+import {groupAndSortTriggers} from '@/lib/today/group';
+import type {TriggerGroup} from '@/lib/today/group';
 import {DEFAULT_THRESHOLDS} from '@/lib/triggers/defaults';
 
-export type PriorityCounts = Record<TriggerPriority, number>;
+export type PriorityCounts = {silent: number; high: number; medium: number; low: number};
 
 export type NowCounters = {
     statuses: Record<ClientStatus, number>;
@@ -16,12 +16,10 @@ export type NowCounters = {
     leadsLast7Days: number;
 };
 
-export function groupTriggersByPriority(
-    triggers: {priority: TriggerPriority}[],
-): PriorityCounts {
-    const out: PriorityCounts = {high: 0, medium: 0, low: 0, info: 0};
-    for (const t of triggers) {
-        out[t.priority]++;
+export function groupTriggersByPriority(groups: TriggerGroup[]): PriorityCounts {
+    const out: PriorityCounts = {silent: 0, high: 0, medium: 0, low: 0};
+    for (const g of groups) {
+        out[g.key] = g.entries.length;
     }
     return out;
 }
@@ -49,16 +47,7 @@ export async function getNowCounters(trainerId: string): Promise<NowCounters> {
     ]);
 
     const thresholds = trainerRow[0]?.settings.thresholds ?? DEFAULT_THRESHOLDS;
-    const today = new Date();
-
-    const triggeredClients = allClients
-        .map((c) => computeTrigger(
-            {status: c.status, septemberBooking: c.septemberBooking, deletedAt: c.deletedAt},
-            c.lastTouchDate,
-            today,
-            thresholds,
-        ))
-        .filter((t): t is NonNullable<typeof t> => t !== null);
+    const groups = groupAndSortTriggers(allClients, new Date(), thresholds);
 
     const statuses = {...emptyStatuses};
     for (const row of statusRows) {
@@ -67,7 +56,7 @@ export async function getNowCounters(trainerId: string): Promise<NowCounters> {
 
     return {
         statuses,
-        triggersByPriority: groupTriggersByPriority(triggeredClients),
+        triggersByPriority: groupTriggersByPriority(groups),
         totalClients: allClients.length,
         leadsLast7Days: leadsRow[0]?.n ?? 0,
     };
