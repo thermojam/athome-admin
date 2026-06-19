@@ -13,7 +13,7 @@ export function ImportDropzone({onFile, disabled}: Props) {
 
     return (
         <label
-            className={`block border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition ${over ? 'border-cyan-500 bg-cyan-50' : 'border-zinc-300'} ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
+            className={`block border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition ${over ? 'border-cyan bg-bg-3' : 'border-line'} ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
             onDragOver={(e) => {e.preventDefault(); setOver(true);}}
             onDragLeave={() => setOver(false)}
             onDrop={(e) => {
@@ -33,8 +33,8 @@ export function ImportDropzone({onFile, disabled}: Props) {
                     if (f) onFile(f);
                 }}
             />
-            <p className="text-zinc-600">Перетащи CSV или нажми, чтобы выбрать файл.</p>
-            <p className="text-xs text-zinc-400 mt-1">15 колонок, до 5000 строк, UTF-8 или Windows-1251.</p>
+            <p className="text-tx">Перетащи CSV или нажми, чтобы выбрать файл.</p>
+            <p className="text-xs text-tx-3 mt-1">15 колонок, до 5000 строк, UTF-8 или Windows-1251.</p>
         </label>
     );
 }
