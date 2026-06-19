@@ -1,4 +1,4 @@
-import {pgTable, uuid, text, jsonb, timestamp, integer, boolean, date, index} from 'drizzle-orm/pg-core';
+import {pgTable, uuid, text, jsonb, timestamp, integer, boolean, date, index, uniqueIndex} from 'drizzle-orm/pg-core';
 import {DEFAULT_THRESHOLDS, DEFAULT_PROMPT_TEMPLATE} from '@/lib/triggers/defaults';
 
 export type TrainerSettings = {
@@ -79,3 +79,26 @@ export type Client = typeof clients.$inferSelect;
 export type NewClient = typeof clients.$inferInsert;
 export type Touch = typeof touches.$inferSelect;
 export type NewTouch = typeof touches.$inferInsert;
+
+export const weeklyStats = pgTable('weekly_stats', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    trainerId: uuid('trainer_id').notNull().references(() => trainers.id),
+    weekStart: date('week_start').notNull(),
+    leadsReception: integer('leads_reception').default(0).notNull(),
+    leadsLifts: integer('leads_lifts').default(0).notNull(),
+    leadsAvito: integer('leads_avito').default(0).notNull(),
+    leadsReferral: integer('leads_referral').default(0).notNull(),
+    leadsBase: integer('leads_base').default(0).notNull(),
+    leadsChat: integer('leads_chat').default(0).notNull(),
+    trials: integer('trials').default(0).notNull(),
+    newRegulars: integer('new_regulars').default(0).notNull(),
+    loadPercent: integer('load_percent'),
+    note: text('note'),
+    createdAt: timestamp('created_at', {withTimezone: true}).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', {withTimezone: true}).defaultNow().notNull(),
+}, (t) => ({
+    uniqWeek: uniqueIndex('weekly_stats_trainer_week_uniq').on(t.trainerId, t.weekStart),
+}));
+
+export type WeeklyStat = typeof weeklyStats.$inferSelect;
+export type NewWeeklyStat = typeof weeklyStats.$inferInsert;
