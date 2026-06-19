@@ -27,6 +27,7 @@ export function parseCsvText(text: string): ParseResult {
     const result = Papa.parse<Record<string, string>>(text, {
         header: true,
         skipEmptyLines: true,
+        delimiter: ',',
         transformHeader: (h) => h.trim(),
     });
 

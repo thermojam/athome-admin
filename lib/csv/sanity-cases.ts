@@ -49,9 +49,9 @@ export const SANITY_CASES: SanityCase[] = [
     },
     {
         id: 'date_excel_serial',
-        label: '4. Excel serial 45000 → 2023-03-09',
+        label: '4. Excel serial 45000 → 2023-03-15',
         csv: `Имя,Статус,Последняя тренировка\nСерж,активный,45000`,
-        expected: {kind: 'ok', expectFirstRow: {lastSessionDate: '2023-03-09'}},
+        expected: {kind: 'ok', expectFirstRow: {lastSessionDate: '2023-03-15'}},
     },
     {
         id: 'bool_variants',
