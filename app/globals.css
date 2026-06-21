@@ -1,26 +1,82 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+    /* фон и подложки */
+    --color-bg: #0E1117;
+    --color-bg-2: #151923;
+    --color-bg-3: #1B2030;
+    --color-bg-glass: #141925;
+
+    /* текст */
+    --color-tx: #E8ECF4;
+    --color-tx-2: #9AA3B5;
+    --color-tx-3: #5E6678;
+
+    /* акценты */
+    --color-cyan: #2CE6FF;
+    --color-violet: #8B5CFF;
+    --color-pink: #FF4FD8;
+    --color-green: #36FF9D;
+    --color-orange: #FF9F43;
+    --color-blue: #4D7DFF;
+
+    /* линии */
+    --color-line: rgb(255 255 255 / 0.09);
+    --color-line-soft: rgb(255 255 255 / 0.055);
+
+    /* радиусы */
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+
+    /* шрифты — переменные подключаются через next/font/google */
+    --font-display: 'Gerhaus', Georgia, serif;
+    --font-sans: var(--font-sans-loaded, 'Nunito'), system-ui, sans-serif;
+    --font-mono: var(--font-mono-loaded, 'JetBrains Mono'), monospace;
+
+    /* движение */
+    --ease-soft: cubic-bezier(.2, .7, .2, 1);
+
+    /* свечение */
+    --shadow-glow: 0 0 24px rgb(44 230 255 / 0.35);
+    --shadow-glow-orange: 0 0 20px rgb(255 159 67 / 0.30);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@layer base {
+    html, body {
+        background-color: var(--color-bg);
+        color: var(--color-tx);
+        font-family: var(--font-sans);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+        background-image: radial-gradient(at 10% 0%, rgb(139 92 255 / 0.15) 0%, transparent 50%),
+        radial-gradient(at 90% 0%, rgb(44 230 255 / 0.10) 0%, transparent 50%);
+        background-attachment: fixed;
+    }
+
+    *:focus-visible {
+        outline: 2px solid var(--color-cyan);
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+@layer components {
+    /* стеклянная карточка */
+    .glass {
+        background: linear-gradient(180deg, var(--color-bg-glass) 0%, color-mix(in oklab, var(--color-bg-glass) 92%, white 8%) 100%);
+        border: 1px solid var(--color-line);
+        box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.10),
+        0 4px 24px rgb(0 0 0 / 0.30),
+        0 1px 2px rgb(0 0 0 / 0.20);
+        border-radius: var(--radius-lg);
+    }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    /* hairline-разделитель */
+    .hairline {
+        border-color: var(--color-line-soft);
+    }
 }
