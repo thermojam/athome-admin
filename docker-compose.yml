@@ -1,20 +1,20 @@
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: athome-postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: athome
-    ports:
-      - "5433:5432"
-    volumes:
-      - athome-pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d athome"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
+    postgres:
+        image: postgres:16-alpine
+        container_name: athome-postgres
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: athome
+        ports:
+            - "5433:5432"
+        volumes:
+            - athome-pgdata:/var/lib/postgresql/data
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U postgres -d athome" ]
+            interval: 5s
+            timeout: 3s
+            retries: 10
 
 volumes:
-  athome-pgdata:
+    athome-pgdata:
