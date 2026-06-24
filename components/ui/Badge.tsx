@@ -5,6 +5,7 @@ type Tone = 'neutral' | 'cyan' | 'violet' | 'pink' | 'green' | 'orange';
 
 type Props = HTMLAttributes<HTMLSpanElement> & {
     tone?: Tone;
+    dot?: boolean;
 };
 
 const toneClasses: Record<Tone, string> = {
@@ -16,7 +17,7 @@ const toneClasses: Record<Tone, string> = {
     orange: 'bg-orange/10 text-orange ring-1 ring-orange/30',
 };
 
-export function Badge({tone = 'neutral', className, children, ...rest}: Props) {
+export function Badge({tone = 'neutral', dot = false, className, children, ...rest}: Props) {
     return (
         <span
             className={clsx(
@@ -26,6 +27,7 @@ export function Badge({tone = 'neutral', className, children, ...rest}: Props) {
             )}
             {...rest}
         >
+            {dot && <span aria-hidden="true" className="size-1.5 rounded-full bg-current"/>}
             {children}
         </span>
     );
