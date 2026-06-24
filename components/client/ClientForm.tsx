@@ -5,6 +5,7 @@ import {Input} from '@/components/ui/Input';
 import {Select} from '@/components/ui/Select';
 import {Textarea} from '@/components/ui/Textarea';
 import {Button} from '@/components/ui/Button';
+import {StatusNotice} from '@/components/ui/StatusNotice';
 import {CLIENT_PROFILES, CLIENT_STATUSES, CLIENT_SOURCES, type Client} from '@/lib/db/schema';
 import {PROFILE_LABELS, STATUS_LABELS, SOURCE_LABELS} from '@/lib/clients/labels';
 import type {ActionResult} from '@/lib/clients/actions';
@@ -13,9 +14,10 @@ type Props = {
     action: (state: ActionResult | null, formData: FormData) => Promise<ActionResult>;
     initial?: Client;
     submitLabel: string;
+    submitVariant?: 'primary' | 'secondary';
 };
 
-export function ClientForm({action, initial, submitLabel}: Props) {
+export function ClientForm({action, initial, submitLabel, submitVariant = 'primary'}: Props) {
     const [state, formAction, pending] = useActionState<ActionResult | null, FormData>(action, null);
     const fieldErrors = state && !state.ok ? state.fieldErrors ?? {} : {};
 
@@ -102,10 +104,12 @@ export function ClientForm({action, initial, submitLabel}: Props) {
                 rows={3}
             />
             {state && !state.ok && !Object.keys(fieldErrors).length && (
-                <p className="text-[13px] text-orange">{state.error}</p>
+                <StatusNotice tone="error">
+                    {state.error}
+                </StatusNotice>
             )}
-            <Button type="submit" variant="primary" size="lg" disabled={pending} className="mt-2">
-                {pending ? 'Сохраняю…' : submitLabel}
+            <Button type="submit" variant={submitVariant} size="lg" loading={pending} className="mt-2">
+                {submitLabel}
             </Button>
         </form>
     );

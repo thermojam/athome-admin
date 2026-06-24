@@ -2,9 +2,18 @@
 
 import {useRouter, useSearchParams, usePathname} from 'next/navigation';
 import {useTransition} from 'react';
+import {Search} from 'lucide-react';
 import {Input} from '@/components/ui/Input';
+import {Badge} from '@/components/ui/Badge';
+import {Card} from '@/components/ui/Card';
 import {CLIENT_STATUSES, CLIENT_PROFILES, type ClientStatus, type ClientProfile} from '@/lib/db/schema';
 import {STATUS_LABELS, PROFILE_LABELS} from '@/lib/clients/labels';
+
+const profileTone: Record<ClientProfile, 'green' | 'pink' | 'cyan'> = {
+    health: 'green',
+    form: 'pink',
+    energy: 'cyan',
+};
 
 export function ClientFilters() {
     const router = useRouter();
@@ -56,45 +65,56 @@ export function ClientFilters() {
     }
 
     return (
-        <div className={`flex flex-col gap-3 ${pending ? 'opacity-60' : ''}`}>
-            <Input
-                name="q"
-                placeholder="Поиск по имени или контакту"
-                defaultValue={search}
-                onChange={(e) => setSearch(e.currentTarget.value)}
-            />
-            <div className="flex flex-wrap gap-2">
-                {CLIENT_STATUSES.map((s) => (
-                    <button
-                        key={s}
-                        type="button"
-                        onClick={() => toggleStatus(s)}
-                        className={`px-3 h-8 rounded-[var(--radius-sm)] text-[13px] border border-line transition-colors ${
-                            statuses.has(s) ? 'bg-cyan/10 border-cyan/40 text-cyan' : 'bg-bg-3 text-tx-2 hover:text-tx'
-                        }`}
-                    >
-                        {STATUS_LABELS[s]}
-                    </button>
-                ))}
+        <Card variant="strong" className={pending ? 'opacity-60' : undefined}>
+            <div className="flex flex-col gap-3">
+                <div className="relative">
+                    <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-tx-3" aria-hidden="true"/>
+                    <Input
+                        name="q"
+                        placeholder="Поиск по имени или контакту"
+                        defaultValue={search}
+                        onChange={(e) => setSearch(e.currentTarget.value)}
+                        className="pl-10"
+                    />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                    {CLIENT_STATUSES.map((s) => (
+                        <button
+                            key={s}
+                            type="button"
+                            onClick={() => toggleStatus(s)}
+                            className={`px-3 h-8 rounded-[var(--radius-sm)] text-[13px] border border-line transition-colors ${
+                                statuses.has(s) ? 'bg-cyan/10 border-cyan/40 text-cyan' : 'bg-bg-3 text-tx-2 hover:text-tx'
+                            }`}
+                        >
+                            {STATUS_LABELS[s]}
+                        </button>
+                    ))}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                    {CLIENT_PROFILES.map((p) => (
+                        <button
+                            key={p}
+                            type="button"
+                            onClick={() => toggleProfile(p)}
+                            aria-pressed={profiles.has(p)}
+                            className={`rounded-[var(--radius-sm)] border px-1.5 py-1 transition-colors ${
+                                profiles.has(p)
+                                    ? 'border-cyan/35 bg-cyan/6'
+                                    : 'border-line bg-bg-3/70 hover:bg-bg-3'
+                            }`}
+                        >
+                            <Badge tone={profileTone[p]} dot>
+                                {PROFILE_LABELS[p]}
+                            </Badge>
+                        </button>
+                    ))}
+                </div>
+                <label className="flex items-center gap-2 text-[13px] text-tx-2">
+                    <input type="checkbox" checked={includeDeleted} onChange={toggleDeleted} className="w-4 h-4 accent-[var(--color-cyan)]"/>
+                    Показывать удалённых
+                </label>
             </div>
-            <div className="flex flex-wrap gap-2">
-                {CLIENT_PROFILES.map((p) => (
-                    <button
-                        key={p}
-                        type="button"
-                        onClick={() => toggleProfile(p)}
-                        className={`px-3 h-8 rounded-[var(--radius-sm)] text-[13px] border border-line transition-colors ${
-                            profiles.has(p) ? 'bg-violet/10 border-violet/40 text-violet' : 'bg-bg-3 text-tx-2 hover:text-tx'
-                        }`}
-                    >
-                        {PROFILE_LABELS[p]}
-                    </button>
-                ))}
-            </div>
-            <label className="flex items-center gap-2 text-[13px] text-tx-2">
-                <input type="checkbox" checked={includeDeleted} onChange={toggleDeleted} className="w-4 h-4 accent-[var(--color-cyan)]"/>
-                Показывать удалённых
-            </label>
-        </div>
+        </Card>
     );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import {useState, useTransition} from 'react';
+import {MessageCircle} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
 import {Modal} from '@/components/ui/Modal';
 import {Select} from '@/components/ui/Select';
@@ -38,6 +39,7 @@ export function TouchActions({clientId}: {clientId: string}) {
     return (
         <>
             <Button variant="primary" size="md" onClick={() => setOpen(true)}>
+                <MessageCircle size={16} aria-hidden="true"/>
                 Отметить касание
             </Button>
             <Modal open={open} onClose={close} title="Отметить касание">
@@ -65,7 +67,7 @@ export function TouchActions({clientId}: {clientId: string}) {
                         <Button variant="ghost" size="md" onClick={close} disabled={pending}>
                             Отмена
                         </Button>
-                        <Button variant="primary" size="md" onClick={submit} disabled={pending}>
+                        <Button variant="primary" size="md" onClick={submit} loading={pending}>
                             Записать
                         </Button>
                     </div>
