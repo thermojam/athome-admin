@@ -1,13 +1,15 @@
 import Link from 'next/link';
 import {Button} from '@/components/ui/Button';
+import {StatusNotice} from '@/components/ui/StatusNotice';
 
 export function ImportReport({added, updated}: {added: number; updated: number}) {
     return (
-        <div className="rounded-lg p-4 bg-bg-2 border border-line">
-            <p className="font-medium mb-2 text-green">Готово.</p>
-            <p className="text-tx">Добавлено: <strong>{added}</strong> · Обновлено: <strong>{updated}</strong></p>
-            <Link href="/clients" className="inline-block mt-3">
-                <Button variant="primary" size="md">Перейти к клиентам</Button>
+        <div className="glass glass-strong space-y-4 rounded-[var(--radius-xl)] p-6">
+            <StatusNotice tone="success" title="Импорт завершён">
+                Добавлено: <strong>{added}</strong> · Обновлено: <strong>{updated}</strong>
+            </StatusNotice>
+            <Link href="/clients" className="inline-block">
+                <Button variant="primary" size="lg">Перейти к клиентам</Button>
             </Link>
         </div>
     );
