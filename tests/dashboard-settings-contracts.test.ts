@@ -24,3 +24,16 @@ test('dashboard counters use semantic visuals and settings buttons keep the CTA 
     assert.match(settings, /variant="primary"/);
     assert.match(settings, /variant="secondary"/);
 });
+
+test('sanity pages use semantic status icons', () => {
+    for (const file of [
+        'app/(app)/dev/triggers-sanity/page.tsx',
+        'app/(app)/dev/export-sanity/page.tsx',
+        'app/(app)/dev/dashboard-sanity/page.tsx',
+        'app/(app)/dev/import-sanity/page.tsx',
+    ]) {
+        const source = readFileSync(file, 'utf8');
+        assert.match(source, /CircleCheck/);
+        assert.match(source, /CircleAlert/);
+    }
+});

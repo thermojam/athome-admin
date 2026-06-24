@@ -2,6 +2,8 @@ import {parseCsvText} from '@/lib/csv/parse';
 import {validateRow} from '@/lib/csv/validate';
 import {SANITY_CASES} from '@/lib/csv/sanity-cases';
 import type {SanityCase} from '@/lib/csv/sanity-cases';
+import {CircleAlert, CircleCheck} from 'lucide-react';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 type CaseResult = {ok: boolean; details: string};
 
@@ -53,33 +55,40 @@ export default function ImportSanityPage() {
     const passed = results.filter(({r}) => r.ok).length;
 
     return (
-        <div className="p-6 max-w-4xl">
-            <h1 className="text-2xl font-semibold mb-2">Import sanity</h1>
-            <p className="mb-4 text-zinc-600">{passed}/{results.length} зелёных.</p>
-            <table className="w-full text-sm border-collapse">
-                <thead>
-                    <tr className="border-b text-left">
-                        <th className="py-2 pr-3 w-12">#</th>
-                        <th className="py-2 pr-3">Кейс</th>
-                        <th className="py-2 pr-3 w-20">Статус</th>
-                        <th className="py-2 pr-3">Детали</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {results.map(({c, r}, i) => (
-                        <tr key={c.id} className="border-b align-top">
-                            <td className="py-2 pr-3 text-zinc-400">{i + 1}</td>
-                            <td className="py-2 pr-3">{c.label}</td>
-                            <td className="py-2 pr-3">
-                                <span className={r.ok ? 'text-green' : 'text-orange'}>
-                                    {r.ok ? 'Пройдено' : 'Ошибка'}
-                                </span>
-                            </td>
-                            <td className="py-2 pr-3 font-mono text-xs">{r.details}</td>
+        <div className="space-y-6">
+            <PageHeader
+                title="Import sanity"
+                kicker="Development only"
+                meta={`${passed} / ${results.length} прошло`}
+            />
+            <div className="glass glass-strong overflow-hidden rounded-[var(--radius-xl)] border border-line/70">
+                <table className="w-full text-sm border-collapse">
+                    <thead>
+                        <tr className="border-b text-left">
+                            <th className="py-2 pr-3 w-12">#</th>
+                            <th className="py-2 pr-3">Кейс</th>
+                            <th className="py-2 pr-3 w-20">Статус</th>
+                            <th className="py-2 pr-3">Детали</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {results.map(({c, r}, i) => (
+                            <tr key={c.id} className="border-b align-top">
+                                <td className="py-2 pr-3 text-zinc-400">{i + 1}</td>
+                                <td className="py-2 pr-3">{c.label}</td>
+                                <td className="py-2 pr-3">
+                                    {r.ok ? (
+                                        <CircleCheck size={17} className="text-green" aria-label="Пройдено"/>
+                                    ) : (
+                                        <CircleAlert size={17} className="text-orange" aria-label="Ошибка"/>
+                                    )}
+                                </td>
+                                <td className="py-2 pr-3 font-mono text-xs">{r.details}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

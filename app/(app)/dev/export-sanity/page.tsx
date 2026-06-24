@@ -1,6 +1,8 @@
 import {notFound} from 'next/navigation';
+import {CircleAlert, CircleCheck} from 'lucide-react';
 import {buildClaudeExport} from '@/lib/export/claude';
 import {EXPORT_SANITY_CASES, SANITY_PROMPT} from '@/lib/export/sanity-cases';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 export default function ExportSanityPage() {
     if (process.env.NODE_ENV !== 'development') notFound();
@@ -18,15 +20,22 @@ export default function ExportSanityPage() {
     const passed = rows.filter((r) => r.allOk).length;
 
     return (
-        <>
-            <h1 className="font-display uppercase text-[27px] tracking-wide mb-2">Export sanity</h1>
-            <p className="text-tx-2 text-[13px] font-mono mb-6">{passed} / {rows.length} прошло</p>
+        <div className="space-y-6">
+            <PageHeader
+                title="Export sanity"
+                kicker="Development only"
+                meta={`${passed} / ${rows.length} прошло`}
+            />
             <div className="flex flex-col gap-4">
                 {rows.map((r, i) => (
-                    <div key={i} className="glass p-4">
+                    <div key={i} className="glass glass-strong p-4">
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-[14px]">{r.c.title}</span>
-                            <span className={r.allOk ? 'text-green' : 'text-orange'}>{r.allOk ? 'Пройдено' : 'Ошибка'}</span>
+                            {r.allOk ? (
+                                <CircleCheck size={17} className="text-green" aria-label="Пройдено"/>
+                            ) : (
+                                <CircleAlert size={17} className="text-orange" aria-label="Ошибка"/>
+                            )}
                         </div>
                         <div className="text-[12px] font-mono text-tx-2 grid grid-cols-3 gap-2 mb-2">
                             <div>missing совпадает: {r.missingOk ? 'Пройдено' : 'Ошибка'}</div>
@@ -42,6 +51,6 @@ export default function ExportSanityPage() {
                     </div>
                 ))}
             </div>
-        </>
+        </div>
     );
 }
