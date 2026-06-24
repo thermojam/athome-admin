@@ -1,82 +1,108 @@
 @import 'tailwindcss';
 
 @theme {
-    /* фон и подложки */
     --color-bg: #0E1117;
     --color-bg-2: #151923;
     --color-bg-3: #1B2030;
     --color-bg-glass: #141925;
-
-    /* текст */
     --color-tx: #E8ECF4;
     --color-tx-2: #9AA3B5;
     --color-tx-3: #5E6678;
-
-    /* акценты */
     --color-cyan: #2CE6FF;
     --color-violet: #8B5CFF;
     --color-pink: #FF4FD8;
     --color-green: #36FF9D;
     --color-orange: #FF9F43;
     --color-blue: #4D7DFF;
-
-    /* линии */
     --color-line: rgb(255 255 255 / 0.09);
     --color-line-soft: rgb(255 255 255 / 0.055);
-
-    /* радиусы */
     --radius-sm: 12px;
     --radius-md: 16px;
     --radius-lg: 22px;
-
-    /* шрифты — переменные подключаются через next/font/google */
-    --font-display: 'Gerhaus', Georgia, serif;
+    --radius-xl: 30px;
+    --font-display: var(--font-display-loaded, 'Gerhaus'), Georgia, serif;
     --font-sans: var(--font-sans-loaded, 'Nunito'), system-ui, sans-serif;
     --font-mono: var(--font-mono-loaded, 'JetBrains Mono'), monospace;
-
-    /* движение */
     --ease-soft: cubic-bezier(.2, .7, .2, 1);
-
-    /* свечение */
-    --shadow-glow: 0 0 24px rgb(44 230 255 / 0.35);
-    --shadow-glow-orange: 0 0 20px rgb(255 159 67 / 0.30);
+    --shadow-glow: 0 0 0 1px rgb(44 230 255 / .45), 0 12px 36px rgb(44 230 255 / .32);
+    --shadow-glow-orange: 0 0 22px rgb(255 159 67 / .28);
+    --shadow-lift: 0 1px 2px rgb(0 0 0 / .4), 0 12px 34px rgb(0 0 0 / .34), 0 32px 80px rgb(0 0 0 / .26);
 }
 
 @layer base {
     html, body {
-        background-color: var(--color-bg);
+        min-height: 100vh;
+        background: var(--color-bg);
         color: var(--color-tx);
         font-family: var(--font-sans);
-        min-height: 100vh;
         -webkit-font-smoothing: antialiased;
     }
 
     body {
-        background-image: radial-gradient(at 10% 0%, rgb(139 92 255 / 0.15) 0%, transparent 50%),
-        radial-gradient(at 90% 0%, rgb(44 230 255 / 0.10) 0%, transparent 50%);
+        background-image:
+            radial-gradient(95% 70% at 12% -8%, rgb(139 92 255 / .20), transparent 55%),
+            radial-gradient(80% 58% at 88% 0%, rgb(44 230 255 / .12), transparent 52%),
+            linear-gradient(180deg, #121624 0%, #0E1117 48%, #0A0D13 100%);
         background-attachment: fixed;
     }
 
     *:focus-visible {
         outline: 2px solid var(--color-cyan);
-        outline-offset: 2px;
-        border-radius: 4px;
+        outline-offset: 3px;
     }
 }
 
 @layer components {
-    /* стеклянная карточка */
     .glass {
-        background: linear-gradient(180deg, var(--color-bg-glass) 0%, color-mix(in oklab, var(--color-bg-glass) 92%, white 8%) 100%);
+        background-color: var(--color-bg-glass);
+        background-image: linear-gradient(180deg, rgb(255 255 255 / .055), rgb(255 255 255 / .012));
         border: 1px solid var(--color-line);
-        box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.10),
-        0 4px 24px rgb(0 0 0 / 0.30),
-        0 1px 2px rgb(0 0 0 / 0.20);
         border-radius: var(--radius-lg);
+        box-shadow: inset 0 1px 0 rgb(255 255 255 / .10), 0 8px 28px rgb(0 0 0 / .28);
+        backdrop-filter: blur(18px);
     }
 
-    /* hairline-разделитель */
+    .glass-strong {
+        border-radius: var(--radius-xl);
+        box-shadow: inset 0 1px 0 rgb(255 255 255 / .11), var(--shadow-lift);
+    }
+
+    .surface-row {
+        border-top: 1px solid var(--color-line-soft);
+        transition: background-color .2s var(--ease-soft), transform .2s var(--ease-soft);
+    }
+
+    .page-enter {
+        animation: page-enter .6s var(--ease-soft) both;
+    }
+
+    .section-kicker {
+        color: var(--color-cyan);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+    }
+
     .hairline {
         border-color: var(--color-line-soft);
+    }
+}
+
+@keyframes page-enter {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 767px) {
+    body { background-attachment: scroll; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
     }
 }
