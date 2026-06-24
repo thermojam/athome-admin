@@ -26,12 +26,12 @@ export default function ExportSanityPage() {
                     <div key={i} className="glass p-4">
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-[14px]">{r.c.title}</span>
-                            <span className={r.allOk ? 'text-green' : 'text-orange'}>{r.allOk ? '✓' : '✗'}</span>
+                            <span className={r.allOk ? 'text-green' : 'text-orange'}>{r.allOk ? 'Пройдено' : 'Ошибка'}</span>
                         </div>
                         <div className="text-[12px] font-mono text-tx-2 grid grid-cols-3 gap-2 mb-2">
-                            <div>missing совпадает: {r.missingOk ? '✓' : '✗'}</div>
-                            <div>текст содержит ожидаемое: {r.textHasOk ? '✓' : '✗'}</div>
-                            <div>контакт не утёк: {r.noContactOk ? '✓' : '✗'}</div>
+                            <div>missing совпадает: {r.missingOk ? 'Пройдено' : 'Ошибка'}</div>
+                            <div>текст содержит ожидаемое: {r.textHasOk ? 'Пройдено' : 'Ошибка'}</div>
+                            <div>контакт не утёк: {r.noContactOk ? 'Пройдено' : 'Ошибка'}</div>
                         </div>
                         <pre className="text-[12px] font-mono text-tx-2 whitespace-pre-wrap bg-bg-3 p-3 rounded-[var(--radius-sm)]">{r.text || '— пусто —'}</pre>
                         {r.missing.length > 0 && (

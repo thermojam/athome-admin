@@ -48,9 +48,9 @@ export const STATUS_SYNONYMS: Record<string, ClientStatus> = {
 };
 
 export const PROFILE_SYNONYMS: Record<string, ClientProfile> = {
-    'здоровье': 'health', '🟢 здоровье': 'health', 'health': 'health',
-    'форма': 'form', '💪 форма': 'form', 'form': 'form',
-    'энергия': 'energy', '⚡ энергия': 'energy', 'energy': 'energy',
+    'здоровье': 'health', 'health': 'health',
+    'форма': 'form', 'form': 'form',
+    'энергия': 'energy', 'energy': 'energy',
 };
 
 export const SOURCE_SYNONYMS: Record<string, ClientSource> = {

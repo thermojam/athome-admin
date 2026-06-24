@@ -60,9 +60,9 @@ export default function TriggersSanityPage() {
                                 {r.actual ? `${r.actual.kind} / ${r.actual.priority}` : '—'}
                             </td>
                             <td className="py-3 px-3 text-right">
-                                {r.match
-                                    ? <span className="text-green">✓</span>
-                                    : <span className="text-orange">✗</span>}
+                                <span className={r.match ? 'text-green' : 'text-orange'}>
+                                    {r.match ? 'Пройдено' : 'Ошибка'}
+                                </span>
                             </td>
                         </tr>
                     ))}

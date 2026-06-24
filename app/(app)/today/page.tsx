@@ -22,14 +22,12 @@ export default async function TodayPage() {
     const boardGroups: BoardGroup[] = groups.map((g) => ({
         key: g.key,
         title: g.title,
-        emoji: g.emoji,
         entries: g.entries.map((e) => ({
             clientId: e.client.id,
             name: e.client.name,
             profile: e.client.profile,
             triggerKind: e.trigger.kind,
             priority: e.trigger.priority,
-            emoji: e.trigger.emoji,
             daysSince: e.trigger.daysSince,
         })),
     }));

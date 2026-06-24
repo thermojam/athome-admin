@@ -22,7 +22,11 @@ export default function DashboardSanityPage() {
                         <tr key={r.id} className="border-b border-line-soft align-top">
                             <td className="py-2 pr-3 text-tx-3">{i + 1}</td>
                             <td className="py-2 pr-3 text-tx">{r.label}</td>
-                            <td className="py-2 pr-3">{r.ok ? '✅' : '❌'}</td>
+                            <td className="py-2 pr-3">
+                                <span className={r.ok ? 'text-green' : 'text-orange'}>
+                                    {r.ok ? 'Пройдено' : 'Ошибка'}
+                                </span>
+                            </td>
                             <td className="py-2 pr-3 font-mono text-xs text-tx-2">{r.details}</td>
                         </tr>
                     ))}

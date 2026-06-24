@@ -12,11 +12,11 @@ const STATUS_LABELS: Record<ClientStatus, string> = {
 
 const STATUS_ORDER: ClientStatus[] = ['active', 'prebook', 'cooling', 'vacation', 'lead', 'left'];
 
-const PRIORITY_TILES: Array<{key: 'silent' | 'high' | 'medium' | 'low'; emoji: string; label: string}> = [
-    {key: 'silent', emoji: '🔇', label: 'Тихие'},
-    {key: 'high', emoji: '🔴', label: 'Срочно'},
-    {key: 'medium', emoji: '🟡', label: 'Скоро'},
-    {key: 'low', emoji: '🟢', label: 'Низкий'},
+const PRIORITY_TILES: Array<{key: 'silent' | 'high' | 'medium' | 'low'; label: string}> = [
+    {key: 'silent', label: 'Тихие'},
+    {key: 'high', label: 'Срочно'},
+    {key: 'medium', label: 'Скоро'},
+    {key: 'low', label: 'Низкий'},
 ];
 
 function Tile({value, label, accent}: {value: number; label: string; accent?: boolean}) {
@@ -53,7 +53,7 @@ export function CountersBlock({counters}: {counters: NowCounters}) {
                         <Tile
                             key={p.key}
                             value={counters.triggersByPriority[p.key]}
-                            label={`${p.emoji} ${p.label}`}
+                            label={p.label}
                             accent={p.key === 'high' || p.key === 'silent'}
                         />
                     ))}

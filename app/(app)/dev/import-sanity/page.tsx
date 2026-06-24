@@ -70,7 +70,11 @@ export default function ImportSanityPage() {
                         <tr key={c.id} className="border-b align-top">
                             <td className="py-2 pr-3 text-zinc-400">{i + 1}</td>
                             <td className="py-2 pr-3">{c.label}</td>
-                            <td className="py-2 pr-3">{r.ok ? '✅' : '❌'}</td>
+                            <td className="py-2 pr-3">
+                                <span className={r.ok ? 'text-green' : 'text-orange'}>
+                                    {r.ok ? 'Пройдено' : 'Ошибка'}
+                                </span>
+                            </td>
                             <td className="py-2 pr-3 font-mono text-xs">{r.details}</td>
                         </tr>
                     ))}

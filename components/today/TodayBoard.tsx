@@ -17,14 +17,12 @@ export type BoardEntry = {
     profile: ClientProfile | null;
     triggerKind: TriggerKind;
     priority: TriggerPriority;
-    emoji: string;
     daysSince: number;
 };
 
 export type BoardGroup = {
     key: 'silent' | 'high' | 'medium' | 'low';
     title: string;
-    emoji: string;
     entries: BoardEntry[];
 };
 
@@ -140,7 +138,6 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
                 {optimisticGroups.map((g) => (
                     <section key={g.key}>
                         <h2 className="font-display uppercase text-[15px] tracking-wide text-tx-2 mb-3 flex items-center gap-2">
-                            <span aria-hidden="true">{g.emoji}</span>
                             <span>{g.title}</span>
                             <span className="text-tx-3 font-mono text-[12px]">· {g.entries.length}</span>
                         </h2>
@@ -157,7 +154,6 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
                                         className="h-4 w-4 rounded border-line bg-bg-3 accent-cyan shrink-0"
                                         aria-label={`Выбрать ${e.name}`}
                                     />
-                                    <span className="text-[20px] leading-none w-6 text-center" aria-hidden="true">{e.emoji}</span>
                                     <Link href={`/clients/${e.clientId}`} className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2">
                                             <span className="text-tx text-[15px] font-medium truncate">{e.name}</span>
@@ -176,7 +172,7 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
                                         className="shrink-0 text-[12px] text-green hover:text-tx px-2 py-1 rounded-[var(--radius-sm)] hover:bg-bg-3 disabled:opacity-50"
                                         aria-label={`Отметить сообщением: ${e.name}`}
                                     >
-                                        ✓ Отметил
+                                        Отметил
                                     </button>
                                     <ChevronRight size={16} className="text-tx-3 shrink-0"/>
                                 </div>

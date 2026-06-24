@@ -4,7 +4,6 @@ const ACTIVE_STALE_MEDIUM = {
     kind: 'active_stale' as const,
     priority: 'medium' as const,
     daysSince: 12,
-    emoji: '🟠',
 };
 
 export type ExportSanityCase = {
@@ -76,7 +75,7 @@ export const EXPORT_SANITY_CASES: ExportSanityCase[] = [
             id: 'c6', name: 'Женя', profile: null,
             personalFact: 'не любит мобайл-формат', goal: null,
             note: null,
-            trigger: {kind: 'silent', priority: 'high', daysSince: Number.POSITIVE_INFINITY, emoji: '🔇'},
+            trigger: {kind: 'silent', priority: 'high', daysSince: Number.POSITIVE_INFINITY},
         }],
         expectedMissingNames: [],
         expectedTextHas: ['Женя', '∞д без касания'],
