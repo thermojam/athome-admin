@@ -13,3 +13,17 @@ test('app shell includes mobile top bar and bottom tab bar', () => {
     assert.match(source, /MobileTopBar/);
     assert.match(source, /MobileTabBar/);
 });
+
+test('auth screens render the brand logo and strong card', () => {
+    for (const file of ['app/(auth)/login/page.tsx', 'app/(auth)/register/page.tsx']) {
+        const source = readFileSync(file, 'utf8');
+        assert.match(source, /BrandLogo/);
+        assert.match(source, /variant="strong"/);
+    }
+});
+
+test('login auth screen uses a status notice for errors', () => {
+    const source = readFileSync('app/(auth)/login/page.tsx', 'utf8');
+    assert.match(source, /StatusNotice/);
+    assert.match(source, /tone="error"/);
+});
