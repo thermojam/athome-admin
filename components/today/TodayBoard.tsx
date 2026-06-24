@@ -2,9 +2,12 @@
 
 import {useState, useOptimistic, useTransition} from 'react';
 import Link from 'next/link';
-import {ChevronRight} from 'lucide-react';
+import {Check, ChevronRight} from 'lucide-react';
+import {TRIGGER_GROUP_VISUALS, TRIGGER_KIND_VISUALS} from '@/components/brand/semantic-icons';
 import {Button} from '@/components/ui/Button';
+import {IconBadge} from '@/components/ui/IconBadge';
 import {Modal} from '@/components/ui/Modal';
+import {StatusNotice} from '@/components/ui/StatusNotice';
 import {recordTouch} from '@/lib/touches/actions';
 import {buildExportForSelection} from '@/lib/export/actions';
 import {TRIGGER_LABELS, type TriggerKind, type TriggerPriority} from '@/lib/triggers/compute';
@@ -114,7 +117,7 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
 
     return (
         <>
-            <div className="flex items-center justify-between mb-4 gap-3">
+            <div className="glass mb-4 flex items-center justify-between gap-3 rounded-2xl p-3 md:p-4">
                 <label className="inline-flex items-center gap-2 text-tx-2 text-[13px] cursor-pointer">
                     <input
                         type="checkbox"
@@ -127,7 +130,8 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
                 <Button
                     variant="primary"
                     size="md"
-                    disabled={selected.size === 0 || pending || copyPending}
+                    disabled={selected.size === 0 || pending}
+                    loading={copyPending}
                     onClick={handleCopy}
                 >
                     Скопировать для Claude{selected.size > 0 ? ` (${selected.size})` : ''}
@@ -135,17 +139,25 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
             </div>
 
             <div className="flex flex-col gap-6">
-                {optimisticGroups.map((g) => (
+                {optimisticGroups.map((g) => {
+                    const GroupIcon = TRIGGER_GROUP_VISUALS[g.key].icon;
+                    const groupTone = TRIGGER_GROUP_VISUALS[g.key].tone;
+
+                    return (
                     <section key={g.key}>
-                        <h2 className="font-display uppercase text-[15px] tracking-wide text-tx-2 mb-3 flex items-center gap-2">
-                            <span>{g.title}</span>
-                            <span className="text-tx-3 font-mono text-[12px]">· {g.entries.length}</span>
+                        <h2 className="mb-4 flex items-center gap-3">
+                            <IconBadge icon={GroupIcon} tone={groupTone}/>
+                            <span className="font-display uppercase text-[18px]">{g.title}</span>
+                            <span className="font-mono text-[12px] text-tx-3">{g.entries.length}</span>
                         </h2>
-                        <div className="glass overflow-hidden">
-                            {g.entries.map((e) => (
+                        <div className="glass glass-strong overflow-hidden">
+                            {g.entries.map((e) => {
+                                const visual = TRIGGER_KIND_VISUALS[e.triggerKind];
+
+                                return (
                                 <div
                                     key={e.clientId}
-                                    className="flex items-center gap-3 px-4 py-3 hover:bg-bg-3 transition-colors border-t hairline first:border-t-0"
+                                    className="surface-row first:border-t-0 px-4 py-4 md:px-5"
                                 >
                                     <input
                                         type="checkbox"
@@ -154,6 +166,7 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
                                         className="h-4 w-4 rounded border-line bg-bg-3 accent-cyan shrink-0"
                                         aria-label={`Выбрать ${e.name}`}
                                     />
+                                    <IconBadge icon={visual.icon} tone={visual.tone} className="shrink-0"/>
                                     <Link href={`/clients/${e.clientId}`} className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2">
                                             <span className="text-tx text-[15px] font-medium truncate">{e.name}</span>
@@ -169,17 +182,20 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
                                         type="button"
                                         onClick={() => quickTouch(e.clientId)}
                                         disabled={pending}
-                                        className="shrink-0 text-[12px] text-green hover:text-tx px-2 py-1 rounded-[var(--radius-sm)] hover:bg-bg-3 disabled:opacity-50"
+                                        className="shrink-0 inline-flex items-center gap-1.5 text-[12px] text-green hover:text-tx px-2 py-1 rounded-[var(--radius-sm)] hover:bg-bg-3 disabled:opacity-50"
                                         aria-label={`Отметить сообщением: ${e.name}`}
                                     >
-                                        Отметил
+                                        <Check size={15} aria-hidden="true"/>
+                                        <span>Отметить</span>
                                     </button>
                                     <ChevronRight size={16} className="text-tx-3 shrink-0"/>
                                 </div>
-                            ))}
+                            );
+                            })}
                         </div>
                     </section>
-                ))}
+                    );
+                })}
             </div>
 
             <Modal
@@ -212,11 +228,10 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
             </Modal>
 
             {toast && (
-                <div
-                    role="status"
-                    className="fixed bottom-24 md:bottom-6 right-6 z-50 glass px-4 py-3 text-[13px] text-tx"
-                >
-                    {toast}
+                <div className="fixed bottom-24 md:bottom-6 right-6 z-50">
+                    <StatusNotice tone="success">
+                        {toast}
+                    </StatusNotice>
                 </div>
             )}
         </>

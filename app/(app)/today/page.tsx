@@ -1,5 +1,6 @@
 import {redirect} from 'next/navigation';
 import {eq} from 'drizzle-orm';
+import {CircleCheck} from 'lucide-react';
 import {auth} from '@/lib/auth/config';
 import {db} from '@/lib/db';
 import {trainers} from '@/lib/db/schema';
@@ -7,6 +8,7 @@ import {listClientsWithLastTouch} from '@/lib/triggers/query';
 import {groupAndSortTriggers} from '@/lib/today/group';
 import {TodayBoard, type BoardGroup} from '@/components/today/TodayBoard';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {DEFAULT_THRESHOLDS} from '@/lib/triggers/defaults';
 
 export default async function TodayPage() {
@@ -36,14 +38,17 @@ export default async function TodayPage() {
 
     return (
         <>
-            <div className="flex items-end justify-between mb-6">
-                <h1 className="font-display uppercase text-[27px] tracking-wide">Сегодня</h1>
-                {total > 0 && (
-                    <span className="text-tx-2 font-mono text-[12px]">{total} триггеров</span>
-                )}
-            </div>
+            <PageHeader
+                title="Сегодня"
+                kicker="Пятничный ритуал"
+                meta={total > 0 ? `${total} сигналов` : 'База под контролем'}
+            />
             {total === 0 ? (
-                <EmptyState title="Триггеров нет" hint="База под контролем — так держать."/>
+                <EmptyState
+                    title="Триггеров нет"
+                    hint="База под контролем — так держать."
+                    icon={CircleCheck}
+                />
             ) : (
                 <TodayBoard groups={boardGroups}/>
             )}
