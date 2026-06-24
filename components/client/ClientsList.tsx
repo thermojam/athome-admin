@@ -19,7 +19,7 @@ export function ClientsList({clients}: {clients: Client[]}) {
     if (clients.length === 0) {
         return (
             <p className="text-tx-2 py-12 text-center">
-                Никого не нашлось. Сбрось фильтры или добавь клиента кнопкой «+ Клиент».
+                Никого не нашлось. Сбрось фильтры или добавь клиента кнопкой «Клиент».
             </p>
         );
     }

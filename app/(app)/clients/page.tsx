@@ -36,6 +36,14 @@ export default async function ClientsPage({searchParams}: {searchParams: SP}) {
 
     const noFilters = !sp.q && statuses.length === 0 && profiles.length === 0 && sp.deleted !== '1';
     const isEmpty = clients.length === 0 && noFilters;
+    const headerAction = (
+        <Link href="/clients/new">
+            <Button variant="primary" size="md">
+                <Plus size={16}/>
+                Клиент
+            </Button>
+        </Link>
+    );
 
     return (
         <>
@@ -43,14 +51,7 @@ export default async function ClientsPage({searchParams}: {searchParams: SP}) {
                 title="База"
                 kicker="Клиенты и лиды"
                 meta={`${clients.length} записей`}
-                action={(
-                    <Link href="/clients/new">
-                        <Button variant="primary" size="md">
-                            <Plus size={16}/>
-                            Клиент
-                        </Button>
-                    </Link>
-                )}
+                {...(isEmpty ? {} : {action: headerAction})}
             />
             {isEmpty ? (
                 <EmptyState

@@ -11,3 +11,10 @@ test('client pages use shared page headers and notices', () => {
     assert.match(readFileSync('app/(app)/clients/page.tsx', 'utf8'), /PageHeader/);
     assert.match(readFileSync('app/(app)/clients/[id]/page.tsx', 'utf8'), /StatusNotice/);
 });
+
+test('clients page header CTA is omitted in the true empty state', () => {
+    const source = readFileSync('app/(app)/clients/page.tsx', 'utf8');
+    assert.match(source, /<PageHeader[\s\S]*\{\.\.\.\(isEmpty \? \{\} : \{\s*action: headerAction\s*\}\)\}/);
+    assert.match(source, /Импортируй таблицу/);
+    assert.match(source, /<Button variant="secondary" size="md">\+ Клиент<\/Button>/);
+});
