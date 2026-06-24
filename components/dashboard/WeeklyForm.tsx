@@ -1,9 +1,12 @@
 'use client';
 
-import {useState, useTransition} from 'react';
+import {useState, useTransition, type FormEvent} from 'react';
 import {useRouter} from 'next/navigation';
 import {upsertWeeklyStat} from '@/lib/weekly/actions';
 import {Button} from '@/components/ui/Button';
+import {Card} from '@/components/ui/Card';
+import {Input} from '@/components/ui/Input';
+import {Textarea} from '@/components/ui/Textarea';
 import {formatWeekLabel} from '@/lib/weekly/week';
 import type {WeeklyStat} from '@/lib/db/schema';
 
@@ -29,7 +32,7 @@ export function WeeklyForm({weekStart, initial}: Props) {
     const router = useRouter();
     const isUpdate = initial !== null;
 
-    function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    function onSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const fd = new FormData(e.currentTarget);
         startTransition(async () => {
@@ -51,47 +54,64 @@ export function WeeklyForm({weekStart, initial}: Props) {
     }
 
     return (
-        <form onSubmit={onSubmit} className="glass rounded-lg p-4 space-y-4">
-            <header>
-                <h2 className="text-tx text-lg font-medium">Неделя {formatWeekLabel(weekStart)}</h2>
-                <p className="text-tx-2 text-xs">{weekStart}</p>
-            </header>
+        <Card variant="strong" className="p-4 md:p-5">
+            <form onSubmit={onSubmit} className="space-y-5">
+                <header>
+                    <h2 className="text-tx text-lg font-medium">Неделя {formatWeekLabel(weekStart)}</h2>
+                    <p className="mt-1 font-mono text-[12px] uppercase tracking-[0.12em] text-tx-3">{weekStart}</p>
+                </header>
 
-            <input type="hidden" name="weekStart" value={weekStart} />
+                <input type="hidden" name="weekStart" value={weekStart} />
 
-            <div>
-                <h3 className="text-tx-2 text-xs uppercase tracking-wide mb-2">Лиды по источникам</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {NUMERIC_FIELDS.slice(0, 6).map((f) => (
-                        <NumField key={f.name} name={f.name} label={f.label} defaultValue={val(f.name)} error={fieldErrors[f.name]} />
-                    ))}
+                <div>
+                    <h3 className="mb-3 text-tx-2 text-xs uppercase tracking-wide">Лиды по источникам</h3>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                        {NUMERIC_FIELDS.slice(0, 6).map((f) => (
+                            <NumField
+                                key={f.name}
+                                name={f.name}
+                                label={f.label}
+                                defaultValue={val(f.name)}
+                                error={fieldErrors[f.name]}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </div>
 
-            <div>
-                <h3 className="text-tx-2 text-xs uppercase tracking-wide mb-2">Тренировки</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {NUMERIC_FIELDS.slice(6).map((f) => (
-                        <NumField key={f.name} name={f.name} label={f.label} defaultValue={val(f.name)} error={fieldErrors[f.name]} />
-                    ))}
-                    <NumField name="loadPercent" label="Загрузка %" defaultValue={val('loadPercent')} error={fieldErrors.loadPercent} placeholder="0–100" />
+                <div>
+                    <h3 className="mb-3 text-tx-2 text-xs uppercase tracking-wide">Тренировки</h3>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                        {NUMERIC_FIELDS.slice(6).map((f) => (
+                            <NumField
+                                key={f.name}
+                                name={f.name}
+                                label={f.label}
+                                defaultValue={val(f.name)}
+                                error={fieldErrors[f.name]}
+                            />
+                        ))}
+                        <NumField
+                            name="loadPercent"
+                            label="Загрузка %"
+                            defaultValue={val('loadPercent')}
+                            error={fieldErrors.loadPercent}
+                            placeholder="0–100"
+                        />
+                    </div>
                 </div>
-            </div>
 
-            <div>
-                <label className="block text-tx-2 text-xs uppercase tracking-wide mb-2">Заметка</label>
-                <textarea
+                <Textarea
                     name="note"
+                    label="Заметка"
                     defaultValue={(initial?.note ?? '') as string}
-                    rows={2}
-                    className="w-full bg-bg-2 border border-line rounded-md p-2 text-tx text-sm"
+                    rows={3}
                 />
-            </div>
 
-            <Button type="submit" variant="primary" size="md" disabled={pending}>
-                {isUpdate ? 'Обновить' : 'Сохранить'}
-            </Button>
-        </form>
+                <Button type="submit" variant="primary" size="md" loading={pending}>
+                    {isUpdate ? 'Обновить' : 'Сохранить'}
+                </Button>
+            </form>
+        </Card>
     );
 }
 
@@ -105,18 +125,16 @@ function NumField({
     placeholder?: string;
 }) {
     return (
-        <label className="flex flex-col gap-1">
-            <span className="text-tx-2 text-xs">{label}</span>
-            <input
-                type="number"
-                inputMode="numeric"
-                min={0}
-                name={name}
-                defaultValue={defaultValue}
-                placeholder={placeholder ?? '0'}
-                className="bg-bg-2 border border-line rounded-md px-3 py-2 text-tx"
-            />
-            {error && <span className="text-pink text-xs">{error}</span>}
-        </label>
+        <Input
+            type="number"
+            inputMode="numeric"
+            min={0}
+            name={name}
+            label={label}
+            defaultValue={defaultValue}
+            placeholder={placeholder ?? '0'}
+            error={error}
+            className="font-mono"
+        />
     );
 }
