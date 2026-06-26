@@ -160,9 +160,9 @@ git commit -m "feat(db): таблица clients с enum-полями и инде
 import type {ClientProfile, ClientStatus, ClientSource} from '@/lib/db/schema';
 
 export const PROFILE_LABELS: Record<ClientProfile, string> = {
-    health: '🟢 Здоровье',
-    form: '🩷 Форма',
-    energy: '🔷 Энергия',
+    health: 'Здоровье',
+    form: 'Форма',
+    energy: 'Энергия',
 };
 
 export const STATUS_LABELS: Record<ClientStatus, string> = {

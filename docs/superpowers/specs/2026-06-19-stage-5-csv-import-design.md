@@ -122,7 +122,7 @@ const CsvRowSchema = z.object({
 
 - **Даты:** `dd.mm.yyyy`, `yyyy-mm-dd`, `dd/mm/yy`, Excel serial (число дней с 1900-01-00). Двузначные годы: 00-29 → 2000+, 30-99 → 1900+.
 - **Bool:** «да/нет», «yes/no», «true/false», «1/0», пусто → `false`.
-- **Enum-значения** (status/profile/source/touchType): словарь синонимов в `lib/csv/synonyms.ts`. Примеры: «активный»→`active`, «отпуск»→`vacation`, «🟢 здоровье»→`health`, «сообщение»→`message`.
+- **Enum-значения** (status/profile/source/touchType): словарь синонимов в `lib/csv/synonyms.ts`. Примеры: «активный»→`active`, «отпуск»→`vacation`, «здоровье»→`health`, «сообщение»→`message`.
 
 ---
 
@@ -239,7 +239,7 @@ await db.transaction(async (tx) => {
 
 Кейсы 1-9 — чистые: прогон через `parseCsvText` + `validateRow`. Кейс 10 — отдельная маленькая sandbox-функция, имитирующая dedup-логику без реальной БД (массив вместо таблицы).
 
-UI playground: страница `/dev/import-sanity` показывает таблицу «Кейс → ожидаемо → получено → ✅/❌», как `/dev/export-sanity` и `/dev/triggers-sanity` в этапах 3-4.
+UI playground: страница `/dev/import-sanity` показывает таблицу «Кейс → ожидаемо → получено → Пройдено/Ошибка», как `/dev/export-sanity` и `/dev/triggers-sanity` в этапах 3-4.
 
 ---
 

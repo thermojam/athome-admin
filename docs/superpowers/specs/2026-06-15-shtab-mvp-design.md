@@ -176,7 +176,7 @@ type TrainerSettings = {
 - `trainer_id` в каждой таблице — задел под мультитенантность без будущих миграций.
 - `last_contact` НЕ хранится — выводится как `GREATEST(last_session_date, created_at, max(touches.touched_at))` через LEFT JOIN LATERAL. Один источник правды.
 - Триггеры НЕ хранятся — `computeTrigger` чистая функция. SQL даёт `client + lastTouchDate`; вычисление в TS.
-- Soft delete только у `clients` (на него смотрит «🔇 тихий»).
+- Soft delete только у `clients` (на него смотрит «тихий»).
 - Перечисления — `text` с enum-ограничением Drizzle (не Postgres ENUM), миграции проще.
 - В UI отображаем кириллические лейблы, в БД — латиница. Снимает риск с кодировкой/сортировкой.
 
@@ -203,32 +203,32 @@ export function computeTrigger(
 
   const daysSince = lastTouchDate ? diffDays(today, lastTouchDate) : Infinity;
 
-  // 🔇 Тихий — последний рубеж, проверяем ПЕРВЫМ.
+  // Тихий — последний рубеж, проверяем ПЕРВЫМ.
   if (daysSince >= thresholds.silentDays) {
-    return { kind: 'silent', priority: 'high', daysSince, emoji: '🔇' };
+    return { kind: 'silent', priority: 'high', daysSince, emoji: 'silent' };
   }
 
   switch (client.status) {
     case 'lead':
       if (daysSince >= thresholds.leadStaleDays)
-        return { kind: 'lead_stale', priority: 'high', daysSince, emoji: '🔴' };
+        return { kind: 'lead_stale', priority: 'high', daysSince, emoji: 'high' };
       return null;
 
     case 'vacation':
       if (!client.septemberBooking)
-        return { kind: 'vacation_no_prebook', priority: 'medium', daysSince, emoji: '🟠' };
+        return { kind: 'vacation_no_prebook', priority: 'medium', daysSince, emoji: 'medium' };
       return null;
 
     case 'active':
       if (daysSince >= thresholds.activeStaleDays)
-        return { kind: 'active_stale', priority: 'high', daysSince, emoji: '🔴' };
+        return { kind: 'active_stale', priority: 'high', daysSince, emoji: 'high' };
       if (daysSince >= thresholds.activeFreshDays)
-        return { kind: 'active_stale', priority: 'medium', daysSince, emoji: '🟠' };
+        return { kind: 'active_stale', priority: 'medium', daysSince, emoji: 'medium' };
       return null;
 
     case 'cooling':
       if (daysSince >= thresholds.cooledStaleDays)
-        return { kind: 'cooled_stale', priority: 'medium', daysSince, emoji: '🟡' };
+        return { kind: 'cooled_stale', priority: 'medium', daysSince, emoji: 'low' };
       return null;
 
     case 'prebook':
@@ -266,10 +266,10 @@ WHERE c.trainer_id = $1
 
 ### Сортировка на /today
 
-1. Группа «🔇 тихий» сверху (страховка-приоритет, отдельная секция в UI).
-2. `high` (🔴): просроченные лиды, активные 21+.
-3. `medium` (🟠): отпуск без предзаписи, активные 10+.
-4. `low/info` (🟡): остывшие 30+.
+1. Группа «тихий» сверху (страховка-приоритет, отдельная секция в UI).
+2. `high`: просроченные лиды, активные 21+.
+3. `medium`: отпуск без предзаписи, активные 10+.
+4. `low/info`: остывшие 30+.
 
 Внутри приоритета — по `daysSince DESC`.
 
@@ -292,7 +292,7 @@ export const DEFAULT_THRESHOLDS = {
 - Server action `recordTouch(clientId, type, note?)` пишет в `touches` с `touched_at = CURRENT_DATE`.
 - После — `revalidatePath('/today')`, `revalidatePath('/clients/[id]', 'page')`.
 - UI кнопка работает оптимистически (`useOptimistic`); реальная пересортировка ждёт ревалидации.
-- На `/today` — кнопка «✓ Отметил сообщением» (тип `message` по умолчанию, в один тап).
+- На `/today` — кнопка «Отметил сообщением» (тип `message` по умолчанию, в один тап).
 - В карточке `/clients/[id]` — модалка с выбором типа и заметкой.
 
 ### Sanity-проверка вместо тестов
@@ -342,7 +342,7 @@ export function buildClaudeExport(
 ### Лейаут и навигация
 
 - **Десктоп (≥768px):** сайдбар 240px фиксированный, пункты «Сегодня · База · Панель · Настройки». «+ Лид» как secondary-кнопка в шапке.
-- **Мобильный (<768px):** нижний таб-бар (Сегодня · База · Панель · ⚙). «+ Лид» как FAB.
+- **Мобильный (<768px):** нижний таб-бар (Сегодня · База · Панель · Настройки). «+ Лид» как FAB.
 - **Контейнер** 1080px центрированный, фон — градиент по брендбуку (база `#0E1117` + radial cyan/violet).
 
 ### Дизайн-токены через Tailwind 4
@@ -430,7 +430,7 @@ export function buildClaudeExport(
 ### Парсер
 
 - `papaparse` + `zod` для построчной валидации.
-- Словарь синонимов в `lib/csv/synonyms.ts`: «активный»→`active`, «отпуск»→`vacation`, «🟢 здоровье»→`health` и т.д.
+- Словарь синонимов в `lib/csv/synonyms.ts`: «активный»→`active`, «отпуск»→`vacation`, «здоровье»→`health` и т.д.
 - Терпимость к датам: `dd.mm.yyyy`, `yyyy-mm-dd`, `dd/mm/yy`, Excel serial (число дней с 1900-01-00). Двузначные годы: 00-29→2000+, 30-99→1900+.
 - Терпимость к bool: «да/нет», «yes/no», «true/false», `1/0`, пусто = false.
 - Кодировка: декодируем файл через `TextDecoder('utf-8', { fatal: true })`; при `TypeError` — повтор с `windows-1251`. В `papaparse` уходит уже декодированная строка.
