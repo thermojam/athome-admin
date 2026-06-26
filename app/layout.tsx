@@ -28,6 +28,11 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
     title: 'Штаб',
     description: 'Админка тренера: база клиентов и пятничный ритуал',
+    icons: {
+        icon: '/favicon.png',
+        shortcut: '/favicon.png',
+        apple: '/favicon.png',
+    },
 };
 
 export default function RootLayout({

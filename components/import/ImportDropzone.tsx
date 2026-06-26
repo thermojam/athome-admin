@@ -1,6 +1,8 @@
 'use client';
 
-import {useRef, useState} from 'react';
+import {useState} from 'react';
+import {clsx} from 'clsx';
+import {Upload} from 'lucide-react';
 
 type Props = {
     onFile: (file: File) => void;
@@ -8,12 +10,16 @@ type Props = {
 };
 
 export function ImportDropzone({onFile, disabled}: Props) {
-    const inputRef = useRef<HTMLInputElement>(null);
     const [over, setOver] = useState(false);
 
     return (
         <label
-            className={`block border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition ${over ? 'border-cyan bg-bg-3' : 'border-line'} ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
+            className={clsx(
+                'glass glass-strong flex min-h-64 cursor-pointer flex-col items-center justify-center rounded-[var(--radius-xl)] border-2 border-dashed p-8 text-center',
+                'transition-[border-color,background-color,box-shadow,opacity] duration-200 ease-[var(--ease-soft)]',
+                over ? 'border-cyan bg-cyan/5 shadow-[var(--shadow-glow)]' : 'border-line',
+                disabled && 'pointer-events-none opacity-50',
+            )}
             onDragOver={(e) => {e.preventDefault(); setOver(true);}}
             onDragLeave={() => setOver(false)}
             onDrop={(e) => {
@@ -24,7 +30,6 @@ export function ImportDropzone({onFile, disabled}: Props) {
             }}
         >
             <input
-                ref={inputRef}
                 type="file"
                 accept=".csv,text/csv"
                 className="hidden"
@@ -33,8 +38,10 @@ export function ImportDropzone({onFile, disabled}: Props) {
                     if (f) onFile(f);
                 }}
             />
-            <p className="text-tx">Перетащи CSV или нажми, чтобы выбрать файл.</p>
-            <p className="text-xs text-tx-3 mt-1">15 колонок, до 5000 строк, UTF-8 или Windows-1251.</p>
+            <Upload size={34} className="mb-4 text-cyan" aria-hidden="true"/>
+            <p className="font-semibold text-tx">Перетащи CSV или выбери файл</p>
+            <p className="mt-2 text-[12px] font-mono text-tx-3">15 колонок · до 5000 строк</p>
+            <p className="mt-4 text-[13px] text-tx-2">UTF-8 или Windows-1251</p>
         </label>
     );
 }

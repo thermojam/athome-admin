@@ -32,7 +32,7 @@ export function Modal({open, onClose, title, children}: Props) {
             onClick={onClose}
         >
             <div
-                className="glass w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto"
+                className="glass glass-strong w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[var(--radius-xl)] p-6"
                 onClick={(e) => e.stopPropagation()}
                 role="dialog"
                 aria-modal="true"

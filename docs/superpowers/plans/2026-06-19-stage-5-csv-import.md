@@ -97,9 +97,9 @@ export const STATUS_SYNONYMS: Record<string, ClientStatus> = {
 };
 
 export const PROFILE_SYNONYMS: Record<string, ClientProfile> = {
-    'здоровье': 'health', '🟢 здоровье': 'health', 'health': 'health',
-    'форма': 'form', '💪 форма': 'form', 'form': 'form',
-    'энергия': 'energy', '⚡ энергия': 'energy', 'energy': 'energy',
+    'здоровье': 'health', 'health': 'health',
+    'форма': 'form', 'form': 'form',
+    'энергия': 'energy', 'energy': 'energy',
 };
 
 export const SOURCE_SYNONYMS: Record<string, ClientSource> = {
@@ -663,7 +663,7 @@ export default function ImportSanityPage() {
                         <tr key={c.id} className="border-b align-top">
                             <td className="py-2 pr-3 text-zinc-400">{i + 1}</td>
                             <td className="py-2 pr-3">{c.label}</td>
-                            <td className="py-2 pr-3">{r.ok ? '✅' : '❌'}</td>
+                            <td className="py-2 pr-3">{r.ok ? 'Пройдено' : 'Ошибка'}</td>
                             <td className="py-2 pr-3 font-mono text-xs">{r.details}</td>
                         </tr>
                     ))}
@@ -678,7 +678,7 @@ export default function ImportSanityPage() {
 
 Run: `npm run dev` (если ещё не запущен)
 Open: `http://localhost:3000/dev/import-sanity`
-Expected: «10/10 зелёных». Все строки ✅.
+Expected: все строки пройдены без ошибок.
 
 - [ ] **Step 3: Если есть красные — починить соответствующий модуль (`lib/csv/*`), не sanity-cases**
 

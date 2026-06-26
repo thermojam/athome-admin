@@ -1,11 +1,13 @@
 import {redirect} from 'next/navigation';
 import Link from 'next/link';
+import {Plus} from 'lucide-react';
 import {auth} from '@/lib/auth/config';
 import {listClients} from '@/lib/clients/queries';
 import {ClientsList} from '@/components/client/ClientsList';
 import {ClientFilters} from '@/components/client/ClientFilters';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {CLIENT_STATUSES, CLIENT_PROFILES, type ClientStatus, type ClientProfile} from '@/lib/db/schema';
 
 type SP = Promise<{q?: string; status?: string; profile?: string; deleted?: string}>;
@@ -34,15 +36,23 @@ export default async function ClientsPage({searchParams}: {searchParams: SP}) {
 
     const noFilters = !sp.q && statuses.length === 0 && profiles.length === 0 && sp.deleted !== '1';
     const isEmpty = clients.length === 0 && noFilters;
+    const headerAction = (
+        <Link href="/clients/new">
+            <Button variant="primary" size="md">
+                <Plus size={16}/>
+                Клиент
+            </Button>
+        </Link>
+    );
 
     return (
         <>
-            <div className="flex items-center justify-between mb-6">
-                <h1 className="font-display uppercase text-[27px] tracking-wide">База</h1>
-                <Link href="/clients/new">
-                    <Button variant="primary" size="md">+ Клиент</Button>
-                </Link>
-            </div>
+            <PageHeader
+                title="База"
+                kicker="Клиенты и лиды"
+                meta={`${clients.length} записей`}
+                {...(isEmpty ? {} : {action: headerAction})}
+            />
             {isEmpty ? (
                 <EmptyState
                     title="База пустая"

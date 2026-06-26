@@ -7,7 +7,6 @@ export type Trigger = {
     kind: TriggerKind;
     priority: TriggerPriority;
     daysSince: number;
-    emoji: string;
 };
 
 export function diffDays(today: Date, then: Date): number {
@@ -35,34 +34,34 @@ export function computeTrigger(
     const daysSince = lastTouchDate ? diffDays(today, lastTouchDate) : Number.POSITIVE_INFINITY;
 
     if (daysSince >= thresholds.silentDays) {
-        return {kind: 'silent', priority: 'high', daysSince, emoji: '🔇'};
+        return {kind: 'silent', priority: 'high', daysSince};
     }
 
     switch (client.status) {
         case 'lead':
             if (daysSince >= thresholds.leadStaleDays) {
-                return {kind: 'lead_stale', priority: 'high', daysSince, emoji: '🔴'};
+                return {kind: 'lead_stale', priority: 'high', daysSince};
             }
             return null;
 
         case 'vacation':
             if (!client.septemberBooking) {
-                return {kind: 'vacation_no_prebook', priority: 'medium', daysSince, emoji: '🟠'};
+                return {kind: 'vacation_no_prebook', priority: 'medium', daysSince};
             }
             return null;
 
         case 'active':
             if (daysSince >= thresholds.activeStaleDays) {
-                return {kind: 'active_stale', priority: 'high', daysSince, emoji: '🔴'};
+                return {kind: 'active_stale', priority: 'high', daysSince};
             }
             if (daysSince >= thresholds.activeFreshDays) {
-                return {kind: 'active_stale', priority: 'medium', daysSince, emoji: '🟠'};
+                return {kind: 'active_stale', priority: 'medium', daysSince};
             }
             return null;
 
         case 'cooling':
             if (daysSince >= thresholds.cooledStaleDays) {
-                return {kind: 'cooled_stale', priority: 'low', daysSince, emoji: '🟡'};
+                return {kind: 'cooled_stale', priority: 'low', daysSince};
             }
             return null;
 

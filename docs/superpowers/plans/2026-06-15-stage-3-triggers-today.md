@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** На `/today` появляется реальный список триггеров «кому пора написать» — сгруппирован по приоритету (🔇 тихий → 🔴 high → 🟠 medium → 🟡 low). Логика триггеров живёт чистой функцией; есть dev-страница с 10 sanity-кейсами для ручной проверки.
+**Goal:** На `/today` появляется реальный список триггеров «кому пора написать» — сгруппирован по приоритету (тихий → high → medium → low). Логика триггеров живёт чистой функцией; есть dev-страница с 10 sanity-кейсами для ручной проверки.
 
 **Architecture:** Один SQL-запрос с `LEFT JOIN LATERAL` отдаёт `(client, lastTouchDate)` для каждого активного клиента; `computeTrigger` в TS считает триггер; `groupAndSortTriggers` группирует по приоритету и сортирует внутри по `daysSince DESC`. Таблица `touches` создаётся в этом этапе, но пока без UI/actions — фоллбэк через `GREATEST(last_session_date, created_at)`. `/dev/triggers-sanity` доступен только в `NODE_ENV=development`.
 
@@ -142,34 +142,34 @@ export function computeTrigger(
     const daysSince = lastTouchDate ? diffDays(today, lastTouchDate) : Number.POSITIVE_INFINITY;
 
     if (daysSince >= thresholds.silentDays) {
-        return {kind: 'silent', priority: 'high', daysSince, emoji: '🔇'};
+        return {kind: 'silent', priority: 'high', daysSince, emoji: 'silent'};
     }
 
     switch (client.status) {
         case 'lead':
             if (daysSince >= thresholds.leadStaleDays) {
-                return {kind: 'lead_stale', priority: 'high', daysSince, emoji: '🔴'};
+                return {kind: 'lead_stale', priority: 'high', daysSince, emoji: 'high'};
             }
             return null;
 
         case 'vacation':
             if (!client.septemberBooking) {
-                return {kind: 'vacation_no_prebook', priority: 'medium', daysSince, emoji: '🟠'};
+                return {kind: 'vacation_no_prebook', priority: 'medium', daysSince, emoji: 'medium'};
             }
             return null;
 
         case 'active':
             if (daysSince >= thresholds.activeStaleDays) {
-                return {kind: 'active_stale', priority: 'high', daysSince, emoji: '🔴'};
+                return {kind: 'active_stale', priority: 'high', daysSince, emoji: 'high'};
             }
             if (daysSince >= thresholds.activeFreshDays) {
-                return {kind: 'active_stale', priority: 'medium', daysSince, emoji: '🟠'};
+                return {kind: 'active_stale', priority: 'medium', daysSince, emoji: 'medium'};
             }
             return null;
 
         case 'cooling':
             if (daysSince >= thresholds.cooledStaleDays) {
-                return {kind: 'cooled_stale', priority: 'medium', daysSince, emoji: '🟡'};
+                return {kind: 'cooled_stale', priority: 'medium', daysSince, emoji: 'low'};
             }
             return null;
 
@@ -380,16 +380,16 @@ export function groupAndSortTriggers(
     const groups: TriggerGroup[] = [];
 
     if (silent.length > 0) {
-        groups.push({key: 'silent', title: 'Тихие', emoji: '🔇', entries: silent});
+        groups.push({key: 'silent', title: 'Тихие', emoji: 'silent', entries: silent});
     }
 
     const high = rest.filter((e) => e.trigger.priority === 'high');
     const medium = rest.filter((e) => e.trigger.priority === 'medium');
     const low = rest.filter((e) => e.trigger.priority === 'low' || e.trigger.priority === 'info');
 
-    if (high.length > 0) groups.push({key: 'high', title: 'Срочно', emoji: '🔴', entries: high});
-    if (medium.length > 0) groups.push({key: 'medium', title: 'Средне', emoji: '🟠', entries: medium});
-    if (low.length > 0) groups.push({key: 'low', title: 'Можно подождать', emoji: '🟡', entries: low});
+    if (high.length > 0) groups.push({key: 'high', title: 'Срочно', emoji: 'high', entries: high});
+    if (medium.length > 0) groups.push({key: 'medium', title: 'Средне', emoji: 'medium', entries: medium});
+    if (low.length > 0) groups.push({key: 'low', title: 'Можно подождать', emoji: 'low', entries: low});
 
     return groups;
 }
@@ -750,8 +750,8 @@ export default function TriggersSanityPage() {
                             </td>
                             <td className="py-3 px-3 text-right">
                                 {r.match
-                                    ? <span className="text-green">✓</span>
-                                    : <span className="text-orange">✗</span>}
+                                    ? <span className="text-green">Пройдено</span>
+                                    : <span className="text-orange">Ошибка</span>}
                             </td>
                         </tr>
                     ))}
@@ -840,9 +840,9 @@ wait %1 2>/dev/null
 - [ ] **Step 3: Manual verify в браузере (залогиненный)**
 
 1. Открыть `/today` — должно быть **4 триггера** в группах:
-    - 🔇 Тихие: 1 (Семён, 60+ дней)
-    - 🔴 Срочно: 2 (Пётр active 25 дней, Алёна лид 5 дней)
-    - 🟠 Средне: 1 (Мария active 12 дней)
+    - Тихие: 1 (Семён, 60+ дней)
+    - Срочно: 2 (Пётр active 25 дней, Алёна лид 5 дней)
+    - Средне: 1 (Мария active 12 дней)
 2. Иван (5 дней, active) и тренер `mmensky@gmail.com`-собственный тренер — отсутствуют в списке.
 3. Каждый триггер — кликабельная строка, ведёт на `/clients/[id]`.
 4. Заголовок «СЕГОДНЯ» каплоком, справа «4 триггеров».

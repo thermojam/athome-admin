@@ -12,35 +12,35 @@ export function WeeklyHistoryTable({weeks, editingWeek}: {weeks: WeeklyStat[]; e
     }
 
     return (
-        <section>
-            <h2 className="text-tx-2 text-xs uppercase tracking-wide mb-2">История</h2>
-            <div className="overflow-x-auto rounded-lg border border-line">
-                <table className="w-full text-sm">
+        <section className="space-y-3">
+            <h2 className="text-tx-2 text-xs uppercase tracking-wide">История</h2>
+            <div className="glass glass-strong overflow-x-auto rounded-2xl border border-line/70">
+                <table className="min-w-[640px] w-full text-sm">
                     <thead>
-                        <tr className="bg-bg-2 text-left text-tx-2">
-                            <th className="py-2 px-3 font-medium">Неделя</th>
-                            <th className="py-2 px-3 font-medium text-right">Лидов</th>
-                            <th className="py-2 px-3 font-medium text-right">Пробных</th>
-                            <th className="py-2 px-3 font-medium text-right">Новых</th>
-                            <th className="py-2 px-3 font-medium text-right">Загрузка</th>
-                            <th className="py-2 px-3 font-medium">Заметка</th>
+                        <tr className="bg-bg-3/70 text-left text-tx-2">
+                            <th className="px-4 py-3 font-medium">Неделя</th>
+                            <th className="px-4 py-3 font-medium text-right">Лидов</th>
+                            <th className="px-4 py-3 font-medium text-right">Пробных</th>
+                            <th className="px-4 py-3 font-medium text-right">Новых</th>
+                            <th className="px-4 py-3 font-medium text-right">Загрузка</th>
+                            <th className="px-4 py-3 font-medium">Заметка</th>
                         </tr>
                     </thead>
                     <tbody>
                         {weeks.map((w) => {
                             const isEditing = w.weekStart === editingWeek;
                             return (
-                                <tr key={w.id} className={`border-b border-line-soft last:border-0 ${isEditing ? 'bg-bg-3' : ''}`}>
-                                    <td className="py-2 px-3">
+                                <tr key={w.id} className={`border-b border-line-soft last:border-0 ${isEditing ? 'bg-bg-3/80' : ''}`}>
+                                    <td className="px-4 py-3">
                                         <Link href={`/dashboard?week=${w.weekStart}`} className="text-cyan hover:underline">
                                             {formatWeekLabel(w.weekStart)}
                                         </Link>
                                     </td>
-                                    <td className="py-2 px-3 text-right text-tx">{totalLeads(w)}</td>
-                                    <td className="py-2 px-3 text-right text-tx">{w.trials}</td>
-                                    <td className="py-2 px-3 text-right text-tx">{w.newRegulars}</td>
-                                    <td className="py-2 px-3 text-right text-tx">{w.loadPercent ?? '—'}%</td>
-                                    <td className="py-2 px-3 text-tx-2 text-xs">{w.note ?? ''}</td>
+                                    <td className="px-4 py-3 text-right font-mono text-tx">{totalLeads(w)}</td>
+                                    <td className="px-4 py-3 text-right font-mono text-tx">{w.trials}</td>
+                                    <td className="px-4 py-3 text-right font-mono text-tx">{w.newRegulars}</td>
+                                    <td className="px-4 py-3 text-right font-mono text-tx">{w.loadPercent ?? '—'}%</td>
+                                    <td className="px-4 py-3 text-[13px] text-tx-2">{w.note ?? ''}</td>
                                 </tr>
                             );
                         })}

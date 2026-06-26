@@ -64,3 +64,6 @@ npm run db:migrate
 - `lib/triggers/` — пороги и (на след. этапах) функция `computeTrigger`.
 - `components/ui/` — атомы (Button, Input, Card, EmptyState).
 - `components/nav/` — Sidebar, MobileTabBar.
+- `public/favicon.png` — источник browser favicon.
+- `components/brand/BrandLogo.tsx` — SVG-марка интерфейса.
+- CSV profile values — только текстовые: `здоровье`, `форма`, `энергия`.

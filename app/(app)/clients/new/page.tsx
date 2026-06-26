@@ -1,5 +1,6 @@
 import {Card} from '@/components/ui/Card';
 import {ClientForm} from '@/components/client/ClientForm';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {createClient, type ActionResult} from '@/lib/clients/actions';
 
 export default function NewClientPage() {
@@ -10,8 +11,12 @@ export default function NewClientPage() {
 
     return (
         <>
-            <h1 className="font-display uppercase text-[27px] tracking-wide mb-6">Новый клиент</h1>
-            <Card>
+            <PageHeader
+                title="Новый клиент"
+                kicker="Клиенты и лиды"
+                meta="Добавь в базу вручную"
+            />
+            <Card variant="strong">
                 <ClientForm action={action} submitLabel="Создать"/>
             </Card>
         </>

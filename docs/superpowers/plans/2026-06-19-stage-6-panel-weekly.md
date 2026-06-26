@@ -472,7 +472,7 @@ export default function DashboardSanityPage() {
                         <tr key={r.id} className="border-b border-line-soft align-top">
                             <td className="py-2 pr-3 text-tx-3">{i + 1}</td>
                             <td className="py-2 pr-3 text-tx">{r.label}</td>
-                            <td className="py-2 pr-3">{r.ok ? '✅' : '❌'}</td>
+                            <td className="py-2 pr-3">{r.ok ? 'Пройдено' : 'Ошибка'}</td>
                             <td className="py-2 pr-3 font-mono text-xs text-tx-2">{r.details}</td>
                         </tr>
                     ))}
@@ -726,10 +726,10 @@ const STATUS_LABELS: Record<ClientStatus, string> = {
 const STATUS_ORDER: ClientStatus[] = ['active', 'prebook', 'cooling', 'vacation', 'lead', 'left'];
 
 const PRIORITY_TILES: Array<{key: 'silent' | 'high' | 'medium' | 'low'; emoji: string; label: string}> = [
-    {key: 'silent', emoji: '🔇', label: 'Тихие'},
-    {key: 'high', emoji: '🔴', label: 'Срочно'},
-    {key: 'medium', emoji: '🟡', label: 'Скоро'},
-    {key: 'low', emoji: '🟢', label: 'Низкий'},
+    {key: 'silent', emoji: 'silent', label: 'Тихие'},
+    {key: 'high', emoji: 'high', label: 'Срочно'},
+    {key: 'medium', emoji: 'medium', label: 'Скоро'},
+    {key: 'low', emoji: 'low', label: 'Низкий'},
 ];
 
 function Tile({value, label, accent}: {value: number; label: string; accent?: boolean}) {

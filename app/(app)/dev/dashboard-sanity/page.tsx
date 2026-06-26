@@ -1,33 +1,46 @@
 import {runSanityCases} from '@/lib/weekly/sanity-cases';
+import {CircleAlert, CircleCheck} from 'lucide-react';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 export default function DashboardSanityPage() {
     const results = runSanityCases();
     const passed = results.filter((r) => r.ok).length;
 
     return (
-        <div className="p-6 max-w-4xl">
-            <h1 className="text-2xl font-semibold mb-2">Dashboard sanity</h1>
-            <p className="mb-4 text-tx-2">{passed}/{results.length} зелёных.</p>
-            <table className="w-full text-sm border-collapse">
-                <thead>
-                    <tr className="border-b border-line text-left">
-                        <th className="py-2 pr-3 w-12">#</th>
-                        <th className="py-2 pr-3">Кейс</th>
-                        <th className="py-2 pr-3 w-20">Статус</th>
-                        <th className="py-2 pr-3">Детали</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {results.map((r, i) => (
-                        <tr key={r.id} className="border-b border-line-soft align-top">
-                            <td className="py-2 pr-3 text-tx-3">{i + 1}</td>
-                            <td className="py-2 pr-3 text-tx">{r.label}</td>
-                            <td className="py-2 pr-3">{r.ok ? '✅' : '❌'}</td>
-                            <td className="py-2 pr-3 font-mono text-xs text-tx-2">{r.details}</td>
+        <div className="space-y-6">
+            <PageHeader
+                title="Dashboard sanity"
+                kicker="Development only"
+                meta={`${passed} / ${results.length} прошло`}
+            />
+            <div className="glass glass-strong overflow-hidden rounded-[var(--radius-xl)] border border-line/70">
+                <table className="w-full text-sm border-collapse">
+                    <thead>
+                        <tr className="border-b border-line text-left">
+                            <th className="py-2 pr-3 w-12">#</th>
+                            <th className="py-2 pr-3">Кейс</th>
+                            <th className="py-2 pr-3 w-20">Статус</th>
+                            <th className="py-2 pr-3">Детали</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {results.map((r, i) => (
+                            <tr key={r.id} className="border-b border-line-soft align-top">
+                                <td className="py-2 pr-3 text-tx-3">{i + 1}</td>
+                                <td className="py-2 pr-3 text-tx">{r.label}</td>
+                                <td className="py-2 pr-3">
+                                    {r.ok ? (
+                                        <CircleCheck size={17} className="text-green" aria-label="Пройдено"/>
+                                    ) : (
+                                        <CircleAlert size={17} className="text-orange" aria-label="Ошибка"/>
+                                    )}
+                                </td>
+                                <td className="py-2 pr-3 font-mono text-xs text-tx-2">{r.details}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

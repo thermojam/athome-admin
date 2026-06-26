@@ -1,7 +1,9 @@
 import {notFound} from 'next/navigation';
+import {CircleAlert, CircleCheck} from 'lucide-react';
 import {computeTrigger} from '@/lib/triggers/compute';
 import {SANITY_CASES} from '@/lib/triggers/sanity-cases';
 import {DEFAULT_THRESHOLDS} from '@/lib/triggers/defaults';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const TODAY = new Date('2026-06-15T12:00:00Z');
 
@@ -34,12 +36,13 @@ export default function TriggersSanityPage() {
     const passed = rows.filter((r) => r.match).length;
 
     return (
-        <>
-            <h1 className="font-display uppercase text-[27px] tracking-wide mb-2">Triggers sanity</h1>
-            <p className="text-tx-2 text-[13px] mb-6 font-mono">
-                {passed} / {rows.length} прошло
-            </p>
-            <div className="glass overflow-hidden">
+        <div className="space-y-6">
+            <PageHeader
+                title="Triggers sanity"
+                kicker="Development only"
+                meta={`${passed} / ${rows.length} прошло`}
+            />
+            <div className="glass glass-strong overflow-hidden rounded-[var(--radius-xl)] border border-line/70">
                 <table className="w-full text-[13px]">
                     <thead>
                     <tr className="text-left text-tx-2 text-[12px] font-mono uppercase tracking-wider">
@@ -60,15 +63,17 @@ export default function TriggersSanityPage() {
                                 {r.actual ? `${r.actual.kind} / ${r.actual.priority}` : '—'}
                             </td>
                             <td className="py-3 px-3 text-right">
-                                {r.match
-                                    ? <span className="text-green">✓</span>
-                                    : <span className="text-orange">✗</span>}
+                                {r.match ? (
+                                    <CircleCheck size={17} className="text-green" aria-label="Пройдено"/>
+                                ) : (
+                                    <CircleAlert size={17} className="text-orange" aria-label="Ошибка"/>
+                                )}
                             </td>
                         </tr>
                     ))}
                     </tbody>
                 </table>
             </div>
-        </>
+        </div>
     );
 }

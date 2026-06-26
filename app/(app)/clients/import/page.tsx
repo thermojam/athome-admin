@@ -8,6 +8,8 @@ import {ImportDropzone} from '@/components/import/ImportDropzone';
 import {ImportPreviewTable} from '@/components/import/ImportPreviewTable';
 import {ImportErrorList} from '@/components/import/ImportErrorList';
 import {ImportReport} from '@/components/import/ImportReport';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {StatusNotice} from '@/components/ui/StatusNotice';
 
 type Phase =
     | {kind: 'idle'}
@@ -64,44 +66,76 @@ export default function ImportPage() {
     }
 
     return (
-        <div className="p-6 max-w-3xl space-y-4">
-            <h1 className="font-display uppercase text-[27px] tracking-wide">Импорт CSV</h1>
+        <div className="mx-auto max-w-4xl space-y-6">
+            <PageHeader
+                title="Импорт CSV"
+                kicker="Массовое обновление базы"
+                meta="До 5000 строк · UTF-8 или Windows-1251"
+            />
 
             {phase.kind === 'idle' && <ImportDropzone onFile={onFile} />}
 
             {phase.kind === 'parsing' && (
-                <p className="text-tx-2">Парсим файл…</p>
+                <div className="glass glass-strong space-y-4 rounded-[var(--radius-xl)] p-6">
+                    <StatusNotice tone="info" title="Готовим превью">
+                        Проверяем кодировку, читаем CSV и собираем первые валидные строки.
+                    </StatusNotice>
+                    <Button variant="primary" size="lg" loading>
+                        Парсим файл
+                    </Button>
+                </div>
             )}
 
             {phase.kind === 'preview' && phase.result.kind === 'file_error' && (
-                <>
-                    <div className="rounded-lg p-3 bg-bg-2 border border-line text-pink">{phase.result.message}</div>
-                    <Button variant="secondary" size="md" onClick={reset}>Выбрать другой файл</Button>
-                </>
+                <div className="glass glass-strong space-y-4 rounded-[var(--radius-xl)] p-6">
+                    <StatusNotice tone="error" title="Файл не удалось прочитать">
+                        {phase.result.message}
+                    </StatusNotice>
+                    <Button variant="primary" size="lg" onClick={reset}>
+                        Выбрать другой файл
+                    </Button>
+                </div>
             )}
 
             {phase.kind === 'preview' && phase.result.kind === 'ok' && (
-                <>
-                    <p className="text-tx-2">Всего строк: {phase.result.total} · Ошибок: {phase.result.errors.length}</p>
+                <div className="glass glass-strong space-y-6 rounded-[var(--radius-xl)] p-6">
+                    <StatusNotice
+                        tone={phase.result.errors.length > 0 ? 'warning' : 'info'}
+                        title={phase.result.errors.length > 0 ? 'Исправь ошибки перед импортом' : 'Превью готово'}
+                    >
+                        Всего строк: {phase.result.total} · Ошибок: {phase.result.errors.length}
+                    </StatusNotice>
                     {phase.result.errors.length === 0 && (
                         <ImportPreviewTable rows={phase.result.previewRows} />
                     )}
                     <ImportErrorList errors={phase.result.errors} />
-                    <div className="flex gap-2">
+                    <div className="flex flex-col gap-3 sm:flex-row">
                         <Button
                             variant="primary"
-                            size="md"
+                            size="lg"
                             onClick={onImport}
                             disabled={phase.result.errors.length > 0 || pending}
+                            loading={pending}
                         >
                             Импортировать {phase.result.total - phase.result.errors.length} клиентов
                         </Button>
-                        <Button variant="secondary" size="md" onClick={reset}>Отмена</Button>
+                        <Button variant="secondary" size="lg" onClick={reset}>
+                            Отмена
+                        </Button>
                     </div>
-                </>
+                </div>
             )}
 
-            {phase.kind === 'committing' && <p className="text-tx-2">Импортируем…</p>}
+            {phase.kind === 'committing' && (
+                <div className="glass glass-strong space-y-4 rounded-[var(--radius-xl)] p-6">
+                    <StatusNotice tone="info" title="Импортируем клиентов">
+                        Сохраняем изменения в базе и обновляем списки клиентов и касаний.
+                    </StatusNotice>
+                    <Button variant="primary" size="lg" loading>
+                        Импортируем…
+                    </Button>
+                </div>
+            )}
 
             {phase.kind === 'imported' && <ImportReport added={phase.report.added} updated={phase.report.updated} />}
         </div>

@@ -21,10 +21,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, Props>(function Textarea
                 id={taId}
                 rows={rest.rows ?? 3}
                 className={clsx(
-                    'px-3 py-2 rounded-[var(--radius-sm)] bg-bg-3 text-tx resize-y',
-                    'border border-line focus:border-cyan focus:outline-none focus:ring-2 focus:ring-cyan/40',
+                    'resize-y rounded-2xl border border-line bg-bg-3/80 px-3 py-2 text-tx',
+                    'focus:border-cyan focus:outline-none focus:ring-2 focus:ring-cyan/30',
                     'transition-all duration-150 ease-[var(--ease-soft)]',
-                    error && 'border-orange focus:border-orange focus:ring-orange/40',
+                    error && 'border-orange focus:border-orange focus:ring-orange/30',
                     className,
                 )}
                 aria-invalid={!!error}

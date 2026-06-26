@@ -1,5 +1,6 @@
 import {forwardRef, type ButtonHTMLAttributes} from 'react';
 import {clsx} from 'clsx';
+import {LoaderCircle} from 'lucide-react';
 
 type Variant = 'primary' | 'secondary' | 'ghost';
 type Size = 'sm' | 'md' | 'lg';
@@ -7,6 +8,7 @@ type Size = 'sm' | 'md' | 'lg';
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     variant?: Variant;
     size?: Size;
+    loading?: boolean;
 };
 
 const variantClasses: Record<Variant, string> = {
@@ -19,28 +21,31 @@ const variantClasses: Record<Variant, string> = {
 };
 
 const sizeClasses: Record<Size, string> = {
-    sm: 'h-9 px-3 text-[13px] rounded-[var(--radius-sm)]',
-    md: 'h-11 px-4 text-[15px] rounded-[var(--radius-md)]',
-    lg: 'h-14 px-6 text-[17px] rounded-[var(--radius-md)] font-medium',
+    sm: 'h-9 px-3 text-[13px]',
+    md: 'h-11 px-5 text-[15px]',
+    lg: 'h-[52px] px-7 text-[16px]',
 };
 
 export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
-    {variant = 'secondary', size = 'md', className, disabled, children, ...rest},
+    {variant = 'secondary', size = 'md', className, disabled, loading = false, children, ...rest},
     ref,
 ) {
     return (
         <button
             ref={ref}
-            disabled={disabled}
+            disabled={disabled || loading}
+            aria-busy={loading || undefined}
             className={clsx(
-                'inline-flex items-center justify-center gap-2 font-sans transition-all duration-200 ease-[var(--ease-soft)]',
-                'disabled:opacity-50 disabled:pointer-events-none',
+                'relative inline-flex items-center justify-center gap-2 rounded-full font-sans font-bold',
+                'transition-[transform,box-shadow,background-color,border-color,opacity] duration-200 ease-[var(--ease-soft)]',
+                'disabled:pointer-events-none disabled:opacity-50',
                 variantClasses[variant],
                 sizeClasses[size],
                 className,
             )}
             {...rest}
         >
+            {loading && <LoaderCircle size={16} className="animate-spin" aria-hidden="true"/>}
             {children}
         </button>
     );

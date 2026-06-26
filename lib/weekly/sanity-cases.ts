@@ -8,7 +8,6 @@ function fakeGroup(key: GroupKey, count: number): TriggerGroup {
     return {
         key,
         title: key,
-        emoji: '·',
         entries: Array.from({length: count}, () => ({} as unknown as TriggerGroup['entries'][number])),
     };
 }

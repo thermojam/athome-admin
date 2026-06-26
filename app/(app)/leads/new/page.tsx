@@ -3,6 +3,7 @@ import {Input} from '@/components/ui/Input';
 import {Select} from '@/components/ui/Select';
 import {Textarea} from '@/components/ui/Textarea';
 import {Button} from '@/components/ui/Button';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {createLead} from '@/lib/clients/actions';
 import {CLIENT_SOURCES} from '@/lib/db/schema';
 import {SOURCE_LABELS} from '@/lib/clients/labels';
@@ -18,9 +19,12 @@ export default function NewLeadPage() {
 
     return (
         <>
-            <h1 className="font-display uppercase text-[27px] tracking-wide mb-2">Новый лид</h1>
-            <p className="text-tx-2 text-[13px] mb-6">4 поля. Остальное — потом, из карточки.</p>
-            <Card>
+            <PageHeader
+                title="Новый лид"
+                kicker="Клиенты и лиды"
+                meta="4 поля. Остальное — потом, из карточки."
+            />
+            <Card variant="strong">
                 <form action={action} className="flex flex-col gap-4">
                     <Input name="name" label="Имя" required autoFocus/>
                     <Input name="contact" label="Контакт (TG-ник, телефон)"/>

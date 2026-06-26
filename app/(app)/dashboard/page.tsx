@@ -5,6 +5,8 @@ import {getWeekStart} from '@/lib/weekly/week';
 import {CountersBlock} from '@/components/dashboard/CountersBlock';
 import {WeeklyForm} from '@/components/dashboard/WeeklyForm';
 import {WeeklyHistoryTable} from '@/components/dashboard/WeeklyHistoryTable';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {StatusNotice} from '@/components/ui/StatusNotice';
 
 type SP = Promise<{week?: string}>;
 
@@ -24,13 +26,17 @@ export default async function DashboardPage({searchParams}: {searchParams: SP}) 
     const isFirstTime = history.length === 0 && current === null;
 
     return (
-        <div className="space-y-6">
-            <h1 className="font-display uppercase text-[27px] tracking-wide">Панель</h1>
+        <div className="space-y-8">
+            <PageHeader
+                title="Панель"
+                kicker="Неделя и загрузка"
+                meta="12 недель истории"
+            />
 
             {isFirstTime && (
-                <div className="glass rounded-lg p-3 text-tx-2 text-sm">
+                <StatusNotice tone="info">
                     Первая пятница ещё впереди — заполни строку, когда наступит.
-                </div>
+                </StatusNotice>
             )}
 
             <WeeklyForm weekStart={editingWeek} initial={current} />

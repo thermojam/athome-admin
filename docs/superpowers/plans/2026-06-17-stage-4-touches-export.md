@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** На `/today` появляются чекбоксы у триггеров и кнопка primary cyan «Скопировать для Claude (N)» — она собирает строки экспорта без `contact` и кладёт текст в буфер. Появляется быстрая кнопка «✓ Отметил» (тип `message`, в один тап, оптимистично). В карточке клиента `/clients/[id]` — отдельная кнопка «Отметить касание» с модалкой выбора типа и заметкой и список истории касаний. Полный пятничный ритуал работает.
+**Goal:** На `/today` появляются чекбоксы у триггеров и кнопка primary cyan «Скопировать для Claude (N)» — она собирает строки экспорта без `contact` и кладёт текст в буфер. Появляется быстрая кнопка «Отметил» (тип `message`, в один тап, оптимистично). В карточке клиента `/clients/[id]` — отдельная кнопка «Отметить касание» с модалкой выбора типа и заметкой и список истории касаний. Полный пятничный ритуал работает.
 
 **Architecture:** Server action `recordTouch(clientId, type, note?)` пишет в `touches` с `touched_at = CURRENT_DATE` и ревалидирует `/today` и `/clients/[id]`. Server action `buildExportForSelection(ids)` гоняет один SQL через существующий `listClientsWithLastTouch`, прогоняет `computeTrigger` и собирает результат через чистую функцию `buildClaudeExport`. Инвариант безопасности: узкий тип `ClientForExport` физически не содержит поле `contact`, серверный action делает явный `pick`, sanity-страница `/dev/export-sanity` проверяет отсутствие `@` и `+7` в выводе. `/today` становится client-component-обёрткой (`TodayBoard`): держит selection, оптимистично убирает строку после quick-touch, открывает модалку «без личного факта», показывает тост.
 
@@ -158,10 +158,10 @@ git commit -m "feat(touches): server action recordTouch + zod-схема"
 import type {TouchType} from '@/lib/db/schema';
 
 export const TOUCH_TYPE_LABELS: Record<TouchType, string> = {
-    message: '💬 Сообщение',
-    call: '📞 Звонок',
-    training: '🏋️ Тренировка',
-    other: '✦ Другое',
+    message: 'Сообщение',
+    call: 'Звонок',
+    training: 'Тренировка',
+    other: 'Другое',
 };
 
 export function touchTypeLabel(t: TouchType): string {
@@ -355,7 +355,7 @@ const ACTIVE_STALE_MEDIUM = {
     kind: 'active_stale' as const,
     priority: 'medium' as const,
     daysSince: 12,
-    emoji: '🟠',
+    emoji: 'medium',
 };
 
 export type ExportSanityCase = {
@@ -427,7 +427,7 @@ export const EXPORT_SANITY_CASES: ExportSanityCase[] = [
             id: 'c6', name: 'Женя', profile: null,
             personalFact: 'не любит мобайл-формат', goal: null,
             note: null,
-            trigger: {kind: 'silent', priority: 'high', daysSince: Number.POSITIVE_INFINITY, emoji: '🔇'},
+            trigger: {kind: 'silent', priority: 'high', daysSince: Number.POSITIVE_INFINITY, emoji: 'silent'},
         }],
         expectedMissingNames: [],
         expectedTextHas: ['Женя', '∞д без касания'],
@@ -490,12 +490,12 @@ export default function ExportSanityPage() {
                     <div key={i} className="glass p-4">
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-[14px]">{r.c.title}</span>
-                            <span className={r.allOk ? 'text-green' : 'text-orange'}>{r.allOk ? '✓' : '✗'}</span>
+                            <span className={r.allOk ? 'text-green' : 'text-orange'}>{r.allOk ? 'Пройдено' : 'Ошибка'}</span>
                         </div>
                         <div className="text-[12px] font-mono text-tx-2 grid grid-cols-3 gap-2 mb-2">
-                            <div>missing совпадает: {r.missingOk ? '✓' : '✗'}</div>
-                            <div>текст содержит ожидаемое: {r.textHasOk ? '✓' : '✗'}</div>
-                            <div>контакт не утёк: {r.noContactOk ? '✓' : '✗'}</div>
+                            <div>missing совпадает: {r.missingOk ? 'Пройдено' : 'Ошибка'}</div>
+                            <div>текст содержит ожидаемое: {r.textHasOk ? 'Пройдено' : 'Ошибка'}</div>
+                            <div>контакт не утёк: {r.noContactOk ? 'Пройдено' : 'Ошибка'}</div>
                         </div>
                         <pre className="text-[12px] font-mono text-tx-2 whitespace-pre-wrap bg-bg-3 p-3 rounded-[var(--radius-sm)]">{r.text || '— пусто —'}</pre>
                         {r.missing.length > 0 && (
@@ -802,7 +802,7 @@ export function TodayBoard({groups}: {groups: BoardGroup[]}) {
                                         className="shrink-0 text-[12px] text-green hover:text-tx px-2 py-1 rounded-[var(--radius-sm)] hover:bg-bg-3 disabled:opacity-50"
                                         aria-label={`Отметить сообщением: ${e.name}`}
                                     >
-                                        ✓ Отметил
+                                        Отметил
                                     </button>
                                     <ChevronRight size={16} className="text-tx-3 shrink-0"/>
                                 </div>
@@ -967,7 +967,7 @@ grep -rn "TriggerRow\|TodayList" app/ components/ lib/ || echo "no references"
 2. Выбрать одного клиента с `personal_fact` → кнопка «Скопировать для Claude (1)» активна → клик → тост «В буфере. Вставляй в Claude.» → вставить в любой текстовый редактор: строка содержит шаблон-промпт + имя клиента, НЕ содержит email/телефон.
 3. Выбрать только клиента без `personal_fact` → клик «Скопировать» → открывается модалка «Без личного факта» с его именем (ссылка на карточку).
 4. Выбрать клиента с фактом и без → модалка с одним именем + активна кнопка «Скопировать без них» → клик → тост.
-5. Клик «✓ Отметил» на любой строке → строка мгновенно пропадает (оптимистично) → после короткой задержки — counter «N триггеров» наверху обновляется.
+5. Клик «Отметил» на любой строке → строка мгновенно пропадает (оптимистично) → после короткой задержки — counter «N триггеров» наверху обновляется.
 
 - [ ] **Step 5: Commit**
 
@@ -1312,10 +1312,10 @@ npm run db:psql -- -c "UPDATE clients SET last_session_date = CURRENT_DATE - INT
 1. `/today`: виден список триггеров.
 2. «Выбрать все» → клик → счётчик кнопки совпадает с total.
 3. «Скопировать для Claude (N)»: если есть без `personal_fact` — модалка; «Скопировать без них» — тост, в буфере текст. Иначе — сразу тост.
-4. Вставить буфер в любой редактор: видны строки вида `Имя · 🟢 Здоровье · Активный без тренировки · 12д без касания · цель · факт · заметка`. **Контактов и `@`/`+7` в тексте НЕТ.**
-5. На одной строке клик «✓ Отметил» — строка пропадает мгновенно, через 1-2 сек счётчик «N триггеров» наверху обновляется.
-6. Открыть карточку этого клиента → «История касаний» содержит свежую запись `💬 Сообщение` от сегодняшней даты.
-7. На карточке клик «Отметить касание» → модалка → «Тренировка» + заметка «час 18:00» → «Записать» → в истории появилась вторая запись.
+4. Вставить буфер в любой редактор: видны строки вида `Имя · Здоровье · Активный без тренировки · 12д без касания · цель · факт · заметка`. **Контактов и `@`/`+7` в тексте НЕТ.**
+5. На одной строке клик «Отметить» — строка пропадает мгновенно, через 1-2 сек счётчик «N триггеров» наверху обновляется.
+6. Открыть карточку этого клиента → «История касаний» содержит свежую запись `Сообщение` от сегодняшней даты.
+7. На карточке клик «Отметить касание» → модалка → `Тренировка` + заметка «час 18:00» → «Записать» → в истории появилась вторая запись.
 
 - [ ] **Step 4: `/dev/export-sanity` остался зелёным**
 
@@ -1344,7 +1344,7 @@ git log --oneline -15
 
 ## Definition of Done Этапа 4
 
-- На `/today` есть чекбоксы у строк, primary cyan кнопка «Скопировать для Claude (N)», quick-touch «✓ Отметил» работает оптимистично.
+- На `/today` есть чекбоксы у строк, primary cyan кнопка «Скопировать для Claude (N)», quick-touch «Отметил» работает оптимистично.
 - В буфере после клика — текст с шаблон-промптом, разделителем `---` и строками клиентов БЕЗ `contact`.
 - Модалка «Без личного факта» предлагает «Допишу факт» / «Скопировать без них» когда уместно.
 - На `/clients/[id]` — кнопка «Отметить касание» с модалкой выбора типа + заметкой, ниже история касаний по убыванию даты.

@@ -12,7 +12,6 @@ export type GroupKey = 'silent' | 'high' | 'medium' | 'low';
 export type TriggerGroup = {
     key: GroupKey;
     title: string;
-    emoji: string;
     entries: TriggerEntry[];
 };
 
@@ -53,16 +52,16 @@ export function groupAndSortTriggers(
     const groups: TriggerGroup[] = [];
 
     if (silent.length > 0) {
-        groups.push({key: 'silent', title: 'Тихие', emoji: '🔇', entries: silent});
+        groups.push({key: 'silent', title: 'Тихие', entries: silent});
     }
 
     const high = rest.filter((e) => e.trigger.priority === 'high');
     const medium = rest.filter((e) => e.trigger.priority === 'medium');
     const low = rest.filter((e) => e.trigger.priority === 'low' || e.trigger.priority === 'info');
 
-    if (high.length > 0) groups.push({key: 'high', title: 'Срочно', emoji: '🔴', entries: high});
-    if (medium.length > 0) groups.push({key: 'medium', title: 'Средне', emoji: '🟠', entries: medium});
-    if (low.length > 0) groups.push({key: 'low', title: 'Можно подождать', emoji: '🟡', entries: low});
+    if (high.length > 0) groups.push({key: 'high', title: 'Срочно', entries: high});
+    if (medium.length > 0) groups.push({key: 'medium', title: 'Скоро', entries: medium});
+    if (low.length > 0) groups.push({key: 'low', title: 'Можно подождать', entries: low});
 
     return groups;
 }
