@@ -71,6 +71,7 @@ export function ClientFilters() {
                     <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-tx-3" aria-hidden="true"/>
                     <Input
                         name="q"
+                        aria-label="Поиск по имени или контакту"
                         placeholder="Поиск по имени или контакту"
                         defaultValue={search}
                         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -83,6 +84,7 @@ export function ClientFilters() {
                             key={s}
                             type="button"
                             onClick={() => toggleStatus(s)}
+                            aria-pressed={statuses.has(s)}
                             className={`px-3 h-8 rounded-[var(--radius-sm)] text-[13px] border border-line transition-colors ${
                                 statuses.has(s) ? 'bg-cyan/10 border-cyan/40 text-cyan' : 'bg-bg-3 text-tx-2 hover:text-tx'
                             }`}

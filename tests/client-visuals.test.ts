@@ -18,3 +18,13 @@ test('clients page header CTA is omitted in the true empty state', () => {
     assert.match(source, /Импортируй таблицу/);
     assert.match(source, /<Button variant="secondary" size="md">\+ Клиент<\/Button>/);
 });
+
+test('client filter search input has an explicit accessible name', () => {
+    const source = readFileSync('components/client/ClientFilters.tsx', 'utf8');
+    assert.match(source, /<Input[\s\S]*aria-label="Поиск по имени или контакту"[\s\S]*placeholder="Поиск по имени или контакту"/);
+});
+
+test('client status filter chips expose pressed state', () => {
+    const source = readFileSync('components/client/ClientFilters.tsx', 'utf8');
+    assert.match(source, /<button[\s\S]*key=\{s\}[\s\S]*aria-pressed=\{statuses\.has\(s\)\}[\s\S]*className=\{`/);
+});
